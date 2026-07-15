@@ -7,7 +7,7 @@ const CONFIG = {
   brandName: "NexcartBD", // Apnar page er nam
   
   // Brand logo (Tumi local image e.g. "logo.png" ba kono live web link use korte parbe)
-  brandLogo: "<a href="https://ibb.co.com/d4pL9drM"><img src="https://i.ibb.co.com/ZzgYsnVX/Nex-Cart-BD.png" alt="Nex-Cart-BD" border="0"></a>", 
+  brandLogo: "https://i.ibb.co.com/ZzgYsnVX/Nex-Cart-BD.png", 
   
   // 2. ORDER LINK (Google Form Link)
   // Protita product card er order button click korle ei dynamic link-e niye jabe
@@ -86,4 +86,3 @@ const CONFIG = {
     }
   ]
 };
-
