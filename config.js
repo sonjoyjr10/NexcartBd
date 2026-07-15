@@ -7,7 +7,7 @@ const CONFIG = {
   brandName: "NexcartBD", // Apnar page er nam
   
   // Brand logo (Tumi local image e.g. "logo.png" ba kono live web link use korte parbe)
-  brandLogo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&q=80", 
+  brandLogo: "https://kommodo.ai/i/lqB1LDVTaDUtyH0WSN6j", 
   
   // 2. ORDER LINK (Google Form Link)
   // Protita product card er order button click korle ei dynamic link-e niye jabe
