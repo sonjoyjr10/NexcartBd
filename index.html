@@ -1,131 +1,421 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexcartBD | Premium Shopping Experience</title>
+  
+  <!-- Google Fonts - Premium look er jonno -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons for premium visual styles -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind Custom Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brandDark: '#0A0A0C',
+            brandCard: '#121216',
+            brandNeon: '#DFFF00', // Image template er moto yellow-neon accent color
+          }
+        }
+      }
+    }
+  </script>
 
-<title>NexcartBd | Premium Shopping</title>
-
-<meta name="description" content="Premium Online Shopping in Bangladesh">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
-
+  <!-- Custom Scrollbar & Premium CSS Animations -->
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0A0A0C;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #DFFF00;
+    }
+    .neon-glow:hover {
+      box-shadow: 0 0 20px rgba(223, 255, 0, 0.4);
+    }
+    .slider-transition {
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
 </head>
+<body class="bg-brandDark text-white antialiased min-h-screen flex flex-col font-sans">
 
-<body>
+  <!-- Header Section -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-brandDark/85 border-b border-white/5 py-4 px-6 md:px-12 transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      
+      <!-- Brand Logo dynamic vabe update hobe -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-10 h-10 rounded-xl overflow-hidden border border-brandNeon/30 group-hover:border-brandNeon transition-all duration-300">
+          <img id="brandLogo" src="" alt="NexcartBD Logo" class="w-full h-full object-cover">
+        </div>
+        <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-white via-gray-300 to-brandNeon bg-clip-text text-transparent group-hover:opacity-90 transition-opacity" id="brandNameText">
+          NexcartBD
+        </span>
+      </a>
 
-<header class="header">
+      <!-- Desktop Navigation Menu -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+        <a href="#" class="hover:text-brandNeon transition-colors duration-200">Home</a>
+        <a href="#products-section" class="hover:text-brandNeon transition-colors duration-200">Products</a>
+        <a href="#about-section" class="hover:text-brandNeon transition-colors duration-200">About Us</a>
+        <a href="#footer-section" class="hover:text-brandNeon transition-colors duration-200">Contact</a>
+      </nav>
 
-<div class="logo">
+      <!-- Action Button -->
+      <div>
+        <a href="#products-section" class="relative inline-flex items-center justify-center px-5 py-2 text-xs font-bold text-black bg-brandNeon rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 neon-glow">
+          Order Karun
+        </a>
+      </div>
+    </div>
+  </header>
 
-<h2>NexcartBd</h2>
+  <!-- Hero Slider Section -->
+  <section class="relative w-full h-[60vh] md:h-[75vh] overflow-hidden bg-black flex items-center">
+    <!-- Image Slides dynamically generated hobe code script are maddhome -->
+    <div id="sliderContainer" class="w-full h-full relative">
+      <!-- Slides insert kora hobe JS diye -->
+    </div>
 
-<p>Trusted Online Shopping</p>
+    <!-- Navigation Arrows -->
+    <button onclick="prevSlide()" class="absolute left-4 z-20 p-3 rounded-full bg-black/40 border border-white/10 hover:border-brandNeon hover:bg-black/80 transition-all text-white">
+      <i data-lucide="chevron-left" class="w-6 h-6"></i>
+    </button>
+    <button onclick="nextSlide()" class="absolute right-4 z-20 p-3 rounded-full bg-black/40 border border-white/10 hover:border-brandNeon hover:bg-black/80 transition-all text-white">
+      <i data-lucide="chevron-right" class="w-6 h-6"></i>
+    </button>
 
-</div>
+    <!-- Slider Pagination Dots -->
+    <div class="absolute bottom-6 left-0 right-0 z-20 flex justify-center gap-2" id="sliderDots">
+      <!-- Dots append hobe dynamically -->
+    </div>
+  </section>
 
-<a href="https://forms.gle/k2RT1qymNaqZU64k7" class="headerBtn">
+  <!-- Feature Highlights -->
+  <section class="py-12 border-b border-white/5 bg-brandCard/30">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all duration-300">
+        <div class="p-3 bg-brandNeon/10 rounded-xl text-brandNeon">
+          <i data-lucide="truck" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg mb-1">Fast Delivery</h3>
+          <p class="text-xs text-gray-400">Shara Bangladesh e shobcheye druto ebong niorapod delivery delivery service.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all duration-300">
+        <div class="p-3 bg-brandNeon/10 rounded-xl text-brandNeon">
+          <i data-lucide="award" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg mb-1">Premium Quality</h3>
+          <p class="text-xs text-gray-400">Amader protiti product ashol ebong 100% premium quality check kora.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all duration-300">
+        <div class="p-3 bg-brandNeon/10 rounded-xl text-brandNeon">
+          <i data-lucide="headphones" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg mb-1">24/7 Support</h3>
+          <p class="text-xs text-gray-400">Je kono proshno ba help er jonno amader team prothoti somoy prostut ache.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-Order Now
+  <!-- Products Section -->
+  <section id="products-section" class="py-20 px-6 md:px-12 max-w-7xl mx-auto w-full flex-grow">
+    <div class="text-center mb-16">
+      <span class="text-xs font-bold uppercase tracking-widest text-brandNeon bg-brandNeon/10 px-3 py-1.5 rounded-full">Exotic Selection</span>
+      <h2 class="text-3xl md:text-5xl font-black mt-4 tracking-tight">AMADER PRODUCT COLLECTION</h2>
+      <p class="text-sm text-gray-400 mt-3 max-w-xl mx-auto">Premium design ebong trusted quality niye amader protiti dynamic segment apnar proyojon metabe shohojei.</p>
+    </div>
 
-</a>
+    <!-- Dynamic Product Cards Grid -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Dynamic Products directly JS theke load hobe -->
+    </div>
+  </section>
 
-</header>
+  <!-- Premium About Section (Inspired by Template design styling) -->
+  <section id="about-section" class="py-20 bg-brandCard/40 border-t border-white/5 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7 space-y-6">
+        <span class="text-xs font-bold text-brandNeon uppercase tracking-widest">ABOUT US</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+          Sera Product, Shothik Mullo Ebong NexcartBD Er <span class="text-brandNeon">Trusted Sheba</span>.
+        </h2>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Amra business shuru korechi ekta bishwas ebong quality baje-to-quality control er upore vitti kore. Premium level product khub shohoje apnar doorstep-e pouche deyai amader uddeshsho. Dynamic dynamic shopping options er sathe high luxury item are customer satisfy amader top priority.
+        </p>
+        <div class="pt-4 border-t border-white/5 flex gap-8">
+          <div>
+            <h4 class="text-2xl font-bold text-brandNeon">10K+</h4>
+            <p class="text-xs text-gray-500">Happy Customers</p>
+          </div>
+          <div>
+            <h4 class="text-2xl font-bold text-brandNeon">100%</h4>
+            <p class="text-xs text-gray-500">Original Goods</p>
+          </div>
+          <div>
+            <h4 class="text-2xl font-bold text-brandNeon">24 Hours</h4>
+            <p class="text-xs text-gray-500">Fast Response</p>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-5 relative group">
+        <div class="absolute inset-0 bg-brandNeon/10 rounded-3xl blur-2xl group-hover:bg-brandNeon/15 transition-all duration-300"></div>
+        <div class="relative rounded-3xl overflow-hidden border border-white/10 p-2 bg-brandCard">
+          <img src="https://images.unsplash.com/photo-1485470733090-0a31655d757a?w=600&q=80" alt="Exquisite Premium Styling" class="rounded-2xl w-full h-80 object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="hero">
+  <!-- Footer Section -->
+  <footer id="footer-section" class="bg-black border-t border-white/5 py-16 px-6 md:px-12 mt-auto">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+      
+      <!-- Column 1 - Brand Info -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg overflow-hidden border border-brandNeon/30">
+            <img id="footerLogo" src="" alt="NexcartBD Footer Logo" class="w-full h-full object-cover">
+          </div>
+          <span class="text-lg font-bold tracking-wider text-white" id="footerBrandName">NexcartBD</span>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed">
+          Premium and custom selective online delivery store. Apnar ekti click e shob premium product dynamic vabe delivered.
+        </p>
+      </div>
 
-<div class="heroText">
+      <!-- Column 2 - Links -->
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-brandNeon mb-4">Quick Navigation</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-brandNeon transition">Home</a></li>
+          <li><a href="#products-section" class="hover:text-brandNeon transition">Our Products</a></li>
+          <li><a href="#about-section" class="hover:text-brandNeon transition">About Us</a></li>
+        </ul>
+      </div>
 
-<span class="sale">
+      <!-- Column 3 - Resources -->
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-brandNeon mb-4">Customer Support</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-brandNeon transition">FAQs</a></li>
+          <li><a href="#" class="hover:text-brandNeon transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-brandNeon transition">Refund Terms</a></li>
+        </ul>
+      </div>
 
-🔥 FLASH SALE
+      <!-- Column 4 - Contact Info -->
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-brandNeon mb-4">Contact and Address</h4>
+        <p class="text-xs text-gray-400 leading-relaxed mb-2">
+          Sector 11, Uttara, Dhaka, Bangladesh.
+        </p>
+        <p class="text-xs text-gray-400">
+          Email: info@nexcartbd.com
+        </p>
+      </div>
 
-</span>
+    </div>
 
-<div class="rating">
+    <!-- Bottom Copyright -->
+    <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+      <p>&copy; 2026 NexcartBD. All Rights Reserved. Designed to premium perfection.</p>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-brandNeon transition"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+        <a href="#" class="hover:text-brandNeon transition"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+        <a href="#" class="hover:text-brandNeon transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </footer>
 
-★★★★★
+  <!-- Dynamic Content Configuration and Scripts -->
+  <script>
+    // Config Object: Akhon theke shob dynamic content change kora asharano shohoj!
+    // Kono item change ba add korte hole direct eikhane edit koro
+    const CONFIG = {
+      // Tomar branding settings
+      brandName: "NexcartBD",
+      // default/custom image links replace koro brand er logo diye
+      brandLogo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&q=80", 
+      
+      // Google form link ta niche deya holo
+      googleFormUrl: "https://forms.gle/xESLfNN1SMfbGKsG6",
+      
+      // Slider features: premium visual slide show setup
+      sliderImages: [
+        {
+          url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80",
+          title: "Ultimate Athletic Sneaker Series",
+          subtitle: "Explore true responsive design on every running stride."
+        },
+        {
+          url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1600&q=80",
+          title: "Exotic Minimal Watch Collection",
+          subtitle: "Smart fitness analytics matching premium elegance."
+        },
+        {
+          url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=80",
+          title: "Wireless Premium ANC Headphones",
+          subtitle: "High definition studio acoustics made portable."
+        }
+      ],
 
-<span>4.9 (1247 Reviews)</span>
+      // Products lists context
+      products: [
+        {
+          id: 1,
+          name: "NexSprint Ultra Shoes",
+          price: "৳ ৩,৫০০",
+          tag: "EXOTIC SPORT",
+          image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+          desc: "Perfect performance sneakers build with carbon fiber plates."
+        },
+        {
+          id: 2,
+          name: "Smart Watch Luxe-8",
+          price: "৳ ২,৮০০",
+          tag: "PREMIUM WEAR",
+          image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+          desc: "Active heartbeat sensors, customizable neon UI design, waterproof body."
+        },
+        {
+          id: 3,
+          name: "Acoustic Over-Ear 4.0",
+          price: "৳ ৪,২০০",
+          tag: "HIGH AUDIO",
+          image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80",
+          desc: "Deep rich bass curves dynamic ambient surrounding canceler system."
+        },
+        {
+          id: 4,
+          name: "Pro Leather Minimalist Wallet",
+          price: "৳ ১,৫০০",
+          tag: "ACCESSORIES",
+          image: "https://images.unsplash.com/photo-1627124718515-47f9931b3e4a?w=600&q=80",
+          desc: "Slim profile handmade textured design matching dark mode accessories."
+        },
+        {
+          id: 5,
+          name: "Neo Tech Wireless Charger Pack",
+          price: "৳ ১,৯০০",
+          tag: "NEW DROP",
+          image: "https://images.unsplash.com/photo-1622445262465-2481c4574875?w=600&q=80",
+          desc: "Fast charging module with premium dark ambient indicators."
+        },
+        {
+          id: 6,
+          name: "Cyber Matte Water Flask",
+          price: "৳ ১,২০০",
+          tag: "LIFESTYLE",
+          image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80",
+          desc: "Double wall vacuum insulation inside custom matte black carbon design."
+        }
+      ]
+    };
 
-</div>
+    // System dynamics initialization
+    let currentSlide = 0;
+    const totalSlides = CONFIG.sliderImages.length;
 
-<h1>
+    // Initialization logic 
+    window.addEventListener('DOMContentLoaded', () => {
+      // Load branding
+      document.getElementById('brandLogo').src = CONFIG.brandLogo;
+      document.getElementById('footerLogo').src = CONFIG.brandLogo;
+      document.getElementById('brandNameText').innerText = CONFIG.brandName;
+      document.getElementById('footerBrandName').innerText = CONFIG.brandName;
 
-Mini Portable Electric Sewing Machine
+      // Populate slider
+      const sliderContainer = document.getElementById('sliderContainer');
+      const sliderDots = document.getElementById('sliderDots');
 
-</h1>
+      CONFIG.sliderImages.forEach((slide, index) => {
+        // Create slide element
+        const slideEl = document.createElement('div');
+        slideEl.className = `absolute inset-0 w-full h-full slider-transition ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+        slideEl.id = `slide-${index}`;
+        
+        slideEl.innerHTML = `
+          <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-[2]"></div>
+          <img src="${slide.url}" alt="${slide.title}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 flex items-center z-[3] px-6 md:px-16 max-w-7xl mx-auto">
+            <div class="max-w-2xl space-y-4">
+              <span class="inline-block px-3 py-1 rounded bg-brandNeon/10 border border-brandNeon/20 text-brandNeon text-xs font-bold tracking-widest uppercase">FEATURED LAUNCH</span>
+              <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-none text-white">${slide.title}</h1>
+              <p class="text-sm md:text-base text-gray-300 max-w-lg font-light">${slide.subtitle}</p>
+              <div class="pt-2">
+                <a href="#products-section" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brandNeon text-black font-bold text-xs transition-all duration-300 hover:scale-105 neon-glow">
+                  Buy Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        sliderContainer.appendChild(slideEl);
 
-<p>
+        // Create navigation dot
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brandNeon w-6' : 'bg-gray-600'}`;
+        dot.id = `dot-${index}`;
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        dot.onclick = () => showSlide(index);
+        sliderDots.appendChild(dot);
+      });
 
-Professional Double Thread Sewing Machine For Home Use.
+      // Populate Products
+      const productGrid = document.getElementById('productGrid');
+      CONFIG.products.forEach((product) => {
+        const pCard = document.createElement('div');
+        pCard.className = "group relative rounded-3xl overflow-hidden bg-brandCard border border-white/5 hover:border-brandNeon/30 transition-all duration-500 hover:-translate-y-2 flex flex-col";
+        
+        // Dynamic construction
+        pCard.innerHTML = `
+          <!-- Image Container -->
+          <div class="relative aspect-[4/3] overflow-hidden bg-black/40">
+            <span class="absolute top-4 left-4 z-10 px-2.5 py-1 text-[10px] font-bold tracking-wider rounded-md bg-brandNeon text-black font-mono">
+              ${product.tag}
+            </span>
+            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          </div>
 
-</p>
+          <!-- Content details -->
+          <div class="p-6 flex-grow flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-4">
+                <h3 class="font-bold text-lg text-white group-hover:text-brandNeon transition-colors">${product.name}</h3>
+                <span class="text-brandNeon font-mono font-extrabold text-base whitespace-nowrap">${product.price}</span>
+              </div>
+              <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                ${product.desc}
+              </p>
+            </div>
 
-<div class="priceBox">
-
-<h2>
-
-৳1220
-
-</h2>
-
-<del>
-
-৳1850
-
-</del>
-
-</div>
-
-<div class="benefits">
-
-<div>
-
-🚚 FREE DELIVERY
-
-</div>
-
-<div>
-
-💵 CASH ON DELIVERY
-
-</div>
-
-<div>
-
-✅ QUALITY CHECKED
-
-</div>
-
-</div>
-
-<a href="https://forms.gle/k2RT1qymNaqZU64k7" class="buyBtn">
-
-🛒 Order Now
-
-</a>
-
-</div>
-
-<div class="heroImage">
-
-<img src="assets/images/product1.png" alt="Mini Sewing Machine">
-
-</div>
-
-</section>
-
-<script src="config.js"></script>
-
-<script src="script.js"></script>
-
-</body>
-
-</html>
+            <!-- Custom action redirect logic -->
+            <div class="pt-6">
+              <button onclick="handleOrder('${product.name}')" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/[0.03] hover:bg-brandNeon hover:text-black 
