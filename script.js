@@ -1,39 +1,41 @@
-// Slider states variables
+// ==========================================
+// NexcartBD: Interactive Dynamic Controller
+// ==========================================
+
 let currentSlide = 0;
 let totalSlides = 0;
 
-// Page content mapping initialization
 window.addEventListener('DOMContentLoaded', () => {
-  // Total slides state detect dynamically theke
+  // CONFIG theke slider count state auto read hobe
   totalSlides = CONFIG.sliderImages.length;
 
-  // Header and Footer branding load config metadata layout update
+  // 1. BRAND SETUPS DIRECT LOAD FROM CONFIG
   document.getElementById('brandLogo').src = CONFIG.brandLogo;
   document.getElementById('footerLogo').src = CONFIG.brandLogo;
   document.getElementById('brandNameText').innerText = CONFIG.brandName;
   document.getElementById('footerBrandName').innerText = CONFIG.brandName;
 
-  // Initialize carousel slide view setup
+  // 2. GENERATE SLIDES DYNAMICALLY
   const sliderContainer = document.getElementById('sliderContainer');
   const sliderDots = document.getElementById('sliderDots');
 
   CONFIG.sliderImages.forEach((slide, index) => {
-    // Single slide element design
+    // Single slide layout block
     const slideEl = document.createElement('div');
     slideEl.className = `absolute inset-0 w-full h-full slider-transition ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
     slideEl.id = `slide-${index}`;
     
     slideEl.innerHTML = `
-      <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-[2]"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent z-[2]"></div>
       <img src="${slide.url}" alt="${slide.title}" class="w-full h-full object-cover">
       <div class="absolute inset-0 flex items-center z-[3] px-6 md:px-16 max-w-7xl mx-auto">
         <div class="max-w-2xl space-y-4">
-          <span class="inline-block px-3 py-1 rounded bg-brandNeon/10 border border-brandNeon/20 text-brandNeon text-xs font-bold tracking-widest uppercase">FEATURED LAUNCH</span>
+          <span class="inline-block px-3 py-1 rounded bg-brandNeon/10 border border-brandNeon/20 text-brandNeon text-xs font-bold tracking-widest uppercase">EXCLUSIVE DISCOUNTS</span>
           <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-none text-white">${slide.title}</h1>
           <p class="text-sm md:text-base text-gray-300 max-w-lg font-light">${slide.subtitle}</p>
           <div class="pt-2">
             <a href="#products-section" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brandNeon text-black font-bold text-xs transition-all duration-300 hover:scale-105 neon-glow">
-              Buy Now <i class="chevron-right-custom" data-lucide="arrow-right" class="w-4 h-4"></i>
+              Explore Collection <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
           </div>
         </div>
@@ -41,7 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
     `;
     sliderContainer.appendChild(slideEl);
 
-    // Slide bottom nav indicators setup
+    // Indicator pagination dot setup
     const dot = document.createElement('button');
     dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brandNeon w-6' : 'bg-gray-600'}`;
     dot.id = `dot-${index}`;
@@ -50,7 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
     sliderDots.appendChild(dot);
   });
 
-  // Dynamic Card element construction inside grid
+  // 3. GENERATE PRODUCT LIST CARDS DYNAMICALLY
   const productGrid = document.getElementById('productGrid');
   CONFIG.products.forEach((product) => {
     const pCard = document.createElement('div');
@@ -83,16 +85,16 @@ window.addEventListener('DOMContentLoaded', () => {
     productGrid.appendChild(pCard);
   });
 
-  // Trigger icons design rendering logic
+  // Dynamic Icon Activation
   lucide.createIcons();
 
-  // Automatic looping interval set kora holo
+  // 4. AUTOMATIC CAROUSEL LOOPING SETUP (5 SECONDS INTERVAL)
   setInterval(() => {
     nextSlide();
   }, 5000);
 });
 
-// Carousel slide show triggers
+// Slider Transition States
 function showSlide(index) {
   document.getElementById(`slide-${currentSlide}`).classList.replace('opacity-100', 'opacity-0');
   document.getElementById(`slide-${currentSlide}`).classList.replace('z-10', 'z-0');
@@ -117,10 +119,8 @@ function prevSlide() {
   showSlide(prevIndex);
 }
 
-// Redirect and parameters processing to order via google form
+// Order Form Action Controller
 function handleOrder(productName) {
-  // User click korle dynamic google form configuration call deep-link trigger hobe
+  // Dynamic order redirect link
   window.open(CONFIG.googleFormUrl, '_blank');
 }
-
-  
