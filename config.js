@@ -17,7 +17,7 @@ const CONFIG = {
   // Tumi eikhane slide images, title ebong short details change/add korte parbe
   sliderImages: [
     {
-      url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80",
+      url: "https://i.ibb.co.com/DfhRgMT7/file-0000000095b071fab55c16fc1ca3f56b.png",
       title: "Ultimate Athletic Sneaker Series",
       subtitle: "Explore true responsive design on every running stride."
     },
