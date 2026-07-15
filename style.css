@@ -1,23 +1,36 @@
-/* Google font-er custom styling dynamic variables custom set */
+/* ==========================================
+   NexcartBD: Custom CSS Stylesheet
+   ========================================== */
+
+/* Page loading/scrolling dynamic styles */
+html {
+  scroll-behavior: smooth; /* Page section switch automatic soft transition layout */
+}
+
+/* 1. PREMIUM WEBKIT SCROLLBAR CUSTOMIZATION */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 8px; /* Scrollbar horizontal weight */
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0C;
+  background: #0A0A0C; /* Dark base-theme match tracking box */
 }
 ::-webkit-scrollbar-thumb {
-  background: #222;
-  border-radius: 4px;
+  background: #222; /* Normal bar color */
+  border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #DFFF00;
+  background: #DFFF00; /* Hover korle dynamic neon theme color hobe */
 }
 
-/* Premium neon shadow effect and slider smooth flow transitions */
+/* 2. NEON LIGHT BUTTON SHADOW ON HOVER EFFECT */
+.neon-glow {
+  transition: all 0.3s ease-in-out;
+}
 .neon-glow:hover {
-  box-shadow: 0 0 20px rgba(223, 255, 0, 0.4);
+  box-shadow: 0 0 20px rgba(223, 255, 0, 0.4); /* Glow effect color matching #DFFF00 */
 }
 
+/* 3. SLIDER TRANSITION CONTROLLER */
 .slider-transition {
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
