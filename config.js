@@ -4,12 +4,12 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAxvZQQpPiAlvLFsjvSgkH6HDpXgXaoK24",
+  authDomain: "nexcartbd-8c880.firebaseapp.com",
+  projectId: "nexcartbd-8c880",
+  storageBucket: "nexcartbd-8c880.firebasestorage.app",
+  messagingSenderId: "258099889504",
+  appId: "1:258099889504:web:a8c5a223e6e35a4d1aca05"
 };
 
 const app = initializeApp(firebaseConfig);
