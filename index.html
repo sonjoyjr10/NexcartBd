@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Pro Pricing Calculator</title>
+    <!-- Google Fonts integration for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main styles mapping -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Premium subtle glow background elements -->
+    <div class="glow-bg-one"></div>
+    <div class="glow-bg-two"></div>
+
+    <div class="calculator-container">
+        <!-- Interactive modern card container -->
+        <div class="calculator-card">
+            
+            <!-- Branding Header -->
+            <header class="card-header">
+                <div class="developer-badge">
+                    <span class="pulse-dot"></span>
+                    WordPress Specialist Pro
+                </div>
+                <h1>Cost Estimator</h1>
+                <p>Requirement set korun ebong real-time custom project budget ready dekhun</p>
+            </header>
+
+            <!-- Main Interactive Form -->
+            <div class="calculator-body">
+                
+                <!-- Website Type Selection with floating active visual -->
+                <div class="selection-group">
+                    <label class="group-label">Website Setup Category</label>
+                    <div class="custom-select-wrapper">
+                        <select id="site-type">
+                            <option value="ecommerce">WooCommerce E-Commerce Website</option>
+                            <option value="portfolio">Professional Business Portfolio</option>
+                            <option value="news">News Portal & Blog Magazine</option>
+                            <option value="lms">LMS / Online Course Academy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Page Count range control slider plus text dynamic indicator -->
+                <div class="selection-group">
+                    <div class="label-row">
+                        <label class="group-label">Total Custom Pages</label>
+                        <span id="page-count-val" class="dynamic-badge">5 Pages</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="page-count" min="1" max="50" value="5">
+                        <div class="range-marks">
+                            <span>1 Page</span>
+                            <span>25 Pages</span>
+                            <span>50 Pages</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Features Addons Grid Setup -->
+                <div class="selection-group">
+                    <label class="group-label">Premium Service Upgrades</label>
+                    <div class="addons-grid">
+                        
+                        <!-- SEO Addon Card -->
+                        <label class="addon-card" for="addon-seo">
+                            <div class="addon-checkbox">
+                                <input type="checkbox" id="addon-seo" checked>
+                                <span class="checkbox-indicator"></span>
+                            </div>
+                            <div class="addon-details">
+                                <span class="addon-title">Advanced SEO Setup</span>
+                                <span class="addon-desc">Search layout schema integration</span>
+                            </div>
+                            <span class="addon-price">+$120</span>
+                        </label>
+
+                        <!-- Speed Boost Addon Card -->
+                        <label class="addon-card" for="addon-speed">
+                            <div class="addon-checkbox">
+                                <input type="checkbox" id="addon-speed" checked>
+                                <span class="checkbox-indicator"></span>
+                            </div>
+                            <div class="addon-details">
+                                <span class="addon-title">GTmetrix Speed Up</span>
+                                <span class="addon-desc">90+ score optimized loading</span>
+                            </div>
+                            <span class="addon-price">+$100</span>
+                        </label>
+
+                        <!-- Security Setup Addon Card -->
+                        <label class="addon-card" for="addon-security">
+                            <div class="addon-checkbox">
+                                <input type="checkbox" id="addon-security">
+                                <span class="checkbox-indicator"></span>
+                            </div>
+                            <div class="addon-details">
+                                <span class="addon-title">Secured Firewall</span>
+                                <span class="addon-desc">Malware defense & protection</span>
+                            </div>
+                            <span class="addon-price">+$80</span>
+                        </label>
+
+                        <!-- Custom Integration Addon Card -->
+                        <label class="addon-card" for="addon-custom">
+                            <div class="addon-checkbox">
+                                <input type="checkbox" id="addon-custom">
+                                <span class="checkbox-indicator"></span>
+                            </div>
+                            <div class="addon-details">
+                                <span class="addon-title">API Custom Integration</span>
+                                <span class="addon-desc">Dynamic CRM / Custom gateway</span>
+                            </div>
+                            <span class="addon-price">+$250</span>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Pricing result calculation visualization board -->
+                <div class="valuation-board">
+                    <div class="calculation-row">
+                        <div class="calculation-label">
+                            <span class="label-text">Total Work Estimate</span>
+                            <span class="label-subtext">Base configuration inclusive</span>
+                        </div>
+                        <div class="pricing-display-frame">
+                            <span class="currency-prefix">$</span>
+                            <span id="estimated-cost" class="pricing-counter">0.00</span>
+                        </div>
+                    </div>
+                    <div class="timeline-banner">
+                        <div class="timeline-indicator">
+                            <span class="clock-icon">🕒</span>
+                            Estimated Delivery Time: <strong id="estimated-time">0 Days</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Form Call-to-Action Order Submission Button -->
+                <a href="https://forms.gle/fL61i5iy4ZfFDvaRA" target="_blank" class="premium-order-btn">
+                    <span>Submit Project Requirements</span>
+                    <svg class="arrow-svg" viewBox="0 0 24 24" width="20" height="20">
+                        <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Injecting system dependencies -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
 
