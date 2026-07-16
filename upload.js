@@ -6,21 +6,20 @@ window.uploadFile = async (fileInput, targetInputId) => {
     if(!file) return;
 
     const targetField = document.getElementById(targetInputId);
-    const originalText = targetField.value;
-    targetField.value = "Uploading file... Please wait.";
+    const preText = targetField.value;
+    targetField.value = "Uploading system binary... Please hold.";
     targetField.disabled = true;
 
-    const storageRef = ref(storage, `cms/${Date.now()}_${file.name}`);
+    const storageRef = ref(storage, `assets/${Date.now()}_${file.name}`);
     
     try {
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        targetField.value = downloadURL;
-    } catch (error) {
-        alert("Upload Failed: " + error.message);
-        targetField.value = originalText;
+        const snap = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snap.ref);
+        targetField.value = url;
+    } catch (err) {
+        alert("Binary Pipeline Fault: " + err.message);
+        targetField.value = preText;
     } finally {
         targetField.disabled = false;
     }
 };
-
