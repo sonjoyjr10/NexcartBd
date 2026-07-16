@@ -2,28 +2,27 @@ import { db } from './firebase-config.js';
 import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 window.addEventListener('authReady', () => {
-    let prodCount = 0;
-    
-    // Watch Products Count
     onSnapshot(collection(db, "products"), (snap) => {
-        prodCount = snap.size;
-        document.getElementById('dash-products').innerText = prodCount;
+        const docCount = document.getElementById('dash-products');
+        if(docCount) docCount.innerText = `${snap.size} Items`;
     });
 
-    // Watch Orders & Calculate Stats
     onSnapshot(collection(db, "orders"), (snap) => {
-        let totalRevenue = 0;
-        let totalOrders = snap.size;
+        let revenue = 0;
+        let count = snap.size;
 
         snap.forEach(doc => {
-            totalRevenue += parseFloat(doc.data().totalPrice || 0);
+            revenue += parseFloat(doc.data().totalPrice || 0);
         });
 
-        let avgBasket = totalOrders > 0 ? (totalRevenue / totalOrders) : 0;
+        let medianValue = count > 0 ? (revenue / count) : 0;
 
-        document.getElementById('dash-orders').innerText = totalOrders;
-        document.getElementById('dash-revenue').innerText = `$${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('dash-avg').innerText = `$${avgBasket.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        const revEl = document.getElementById('dash-revenue');
+        const countEl = document.getElementById('dash-orders');
+        const medEl = document.getElementById('dash-avg');
+
+        if(revEl) revEl.innerText = `$${revenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        if(countEl) countEl.innerText = count;
+        if(medEl) medEl.innerText = `$${medianValue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     });
 });
-
