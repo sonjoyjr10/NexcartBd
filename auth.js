@@ -4,8 +4,9 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https:/
 const loginForm = document.getElementById('login-form');
 const authContainer = document.getElementById('auth-container');
 const mainLayout = document.getElementById('main-layout');
+const landingPage = document.getElementById('landing-page');
 
-// Handle Sign In
+// Handle Sign In Securely
 if(loginForm) {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -13,24 +14,27 @@ if(loginForm) {
         const pass = document.getElementById('login-password').value;
 
         signInWithEmailAndPassword(auth, email, pass)
-            .catch(err => alert("Error: " + err.message));
+            .catch(err => alert("Authentication Failed: " + err.message));
     });
 }
 
-// Handle Logout
+// Handle Sign Out Event
 document.getElementById('logout-btn').addEventListener('click', () => {
     signOut(auth);
 });
 
-// Monitor Auth State
+// Monitor Auth State State Routing
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        // Authenticated Admin Route
+        if(landingPage) landingPage.classList.add('hidden');
         authContainer.classList.add('hidden');
         mainLayout.classList.remove('hidden');
-        window.dispatchEvent(new Event('authReady')); // Alerts other modules to fetch data
+        window.dispatchEvent(new Event('authReady')); 
     } else {
-        authContainer.classList.remove('hidden');
+        // Public Guest Route
         mainLayout.classList.add('hidden');
+        if(landingPage) landingPage.classList.remove('hidden');
+        authContainer.classList.add('hidden'); // Modal is kept hidden until requested
     }
 });
-
