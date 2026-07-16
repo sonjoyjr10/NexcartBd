@@ -3,30 +3,33 @@ import { doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7
 
 const settingsForm = document.getElementById('settings-form');
 
-// Public Listener for Brand Configs (Syncs both guest view and workspace names instantly)
 onSnapshot(doc(db, "settings", "global"), (docSnap) => {
     if(docSnap.exists()){
         const config = docSnap.data();
         
-        // Auto Populate fields if inside dashboard view
-        const fieldTitle = document.getElementById('set-title');
-        if(fieldTitle) fieldTitle.value = config.storeName || '';
-        const fieldLogo = document.getElementById('set-logo-url');
-        if(fieldLogo) fieldLogo.value = config.logoUrl || '';
-        const fieldBanner = document.getElementById('set-banner-url');
-        if(fieldBanner) fieldBanner.value = config.bannerUrl || '';
+        const setT = document.getElementById('set-title');
+        const setL = document.getElementById('set-logo-url');
+        const setB = document.getElementById('set-banner-url');
+
+        if(setT) setT.value = config.storeName || '';
+        if(setL) setL.value = config.logoUrl || '';
+        if(setB) setB.value = config.bannerUrl || '';
         
-        // Realtime Dom Synchronization across frontend assets
         if(config.storeName) {
-            document.getElementById('nav-title').innerText = config.storeName;
-            document.getElementById('landing-title').innerText = config.storeName.toUpperCase();
+            const navT = document.getElementById('nav-title');
+            const landT = document.getElementById('landing-title');
+            if(navT) navT.innerText = config.storeName;
+            if(landT) landT.innerText = config.storeName.toUpperCase();
         }
         if(config.logoUrl) {
-            document.getElementById('nav-logo').src = config.logoUrl;
-            document.getElementById('landing-logo').src = config.logoUrl;
+            const navL = document.getElementById('nav-logo');
+            const landL = document.getElementById('landing-logo');
+            if(navL) navL.src = config.logoUrl;
+            if(landL) landL.src = config.logoUrl;
         }
         if(config.bannerUrl) {
-            document.getElementById('landing-banner').src = config.bannerUrl;
+            const bannerEl = document.getElementById('landing-banner');
+            if(bannerEl) bannerEl.src = config.bannerUrl;
         }
     }
 });
@@ -39,6 +42,6 @@ if(settingsForm) {
             logoUrl: document.getElementById('set-logo-url').value,
             bannerUrl: document.getElementById('set-banner-url').value
         });
-        alert("Global configurations published successfully!");
+        alert("Global platform specifications deployed successfully!");
     });
 }
