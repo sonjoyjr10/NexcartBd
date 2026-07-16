@@ -38,3 +38,20 @@ window.editProduct = (id, title, price, stock, image) => {
     document.getElementById('product-modal').classList.remove('hidden');
 };
 
+// Switch Screen between Customer View and Admin Portal
+window.goToAdminPortal = () => {
+    document.getElementById('landing-page').classList.add('hidden');
+    document.getElementById('auth-container').classList.remove('hidden');
+};
+
+// Return to Shop View
+window.goToShop = () => {
+    document.getElementById('landing-page').classList.remove('hidden');
+    document.getElementById('auth-container').classList.add('hidden');
+    document.getElementById('main-layout').classList.add('hidden');
+};
+
+// Extend Logout Button to go back to shop automatically
+document.getElementById('logout-btn').addEventListener('click', () => {
+    setTimeout(() => { goToShop(); }, 500);
+});
