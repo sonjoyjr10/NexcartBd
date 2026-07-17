@@ -4,14 +4,14 @@
 
 const SiteConfig = {
     // 1. Store Title and Logos (Website er nam o design)
-    storeName: "PickaShop",
+    storeName: "NexcartBD",
     logoTextFirst: "PICKA",      // Logo prothom ongsho (Sada hobe)
     logoTextSecond: "SHOP",     // Logo ditiyo ongsho (Nil hobe)
     
     // 2. Contact details (Apnar custom contact details)
-    phone: "+8809666745745",
-    email: "support@pickashop.com",
-    address: "Tejgaon Industrial Area, Dhaka - 1215",
+    phone: "01917531562",
+    email: "support@nexcartbd.com",
+    address: "Nowabgonj, Dinajpur - 5260",
     
     // 3. TARGET GOOGLE FORM REDIRECTION URL LINK (Apnar Google Form er complete link)
     googleFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLScBmhav2n8QOg4NVpuvdv4huqpjDdavkTZEFWOKRVxz07oUZw/viewform?usp=pp_url",
