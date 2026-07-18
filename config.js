@@ -1,47 +1,12 @@
-/* ==========================================
-   config.js
-   NexCartBD Configuration
-========================================== */
+// FILE: config.js
+// NEXCARTBD — API configuration
+// Replace API_URL with your real backend base URL.
 
-const CONFIG = {
+const API_URL = "https://api.nexcartbd.com";
 
-    API_URL: "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL_HERE",
-
-    WHATSAPP_NUMBER: "8801700000000",
-
-    CURRENCY: "৳",
-
-    STORAGE: {
-        USER: "nexcart_user",
-        CART: "nexcart_cart"
-    },
-
-    STATUS: {
-        PENDING: "Pending",
-        CONFIRMED: "Confirmed",
-        PROCESSING: "Processing",
-        SHIPPED: "Shipped",
-        DELIVERED: "Delivered",
-        CANCELLED: "Cancelled"
-    }
-
+const API_ACTIONS = {
+  REGISTER: `${API_URL}/auth/register`,
+  LOGIN: `${API_URL}/auth/login`,
+  GET_PRODUCTS: `${API_URL}/products`,
+  CREATE_ORDER: `${API_URL}/orders/create`
 };
-
-async function api(action,data={}){
-
-    const body={
-        action,
-        ...data
-    };
-
-    const res=await fetch(CONFIG.API_URL,{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(body)
-    });
-
-    return await res.json();
-
-}
