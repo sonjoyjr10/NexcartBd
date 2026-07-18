@@ -1,211 +1,209 @@
-// Global State Allocation Engine
-let cart = [];
-let shippingCost = CONFIG.shipping.insideDhaka; // Dynamically pull initial inside Dhaka cost
+let selectedProduct = null;
+let currentQuantity = 1;
+let deliveryCharge = CONFIG.DELIVERY.insideDhaka.charge;
 
-// Core System Lifecycles - Inject all dynamic assets using CONFIG object properties
-function initializeWebsite() {
-    // 1. Set global document headers & top notice bar text dynamically
-    document.getElementById("site-title-tag").textContent = `${CONFIG.storeName} - Premium E-Store Platform`;
-    document.getElementById("top-bar-announcement").textContent = `Welcome to ${CONFIG.storeName} | Fast Reliable Deliveries Everywhere`;
+// ১. পেজ লোড হবার পরে ডাইনামিক স্টাইল এবং কনফিগারেশন সেট করা
+document.addEventListener("DOMContentLoaded", () => {
+    // ডাইনামিক সিএসএস ভেরিয়েবল ইনজেকশন
+    const root = document.documentElement;
+    root.style.setProperty('--primary-color', CONFIG.THEME.primaryColor);
+    root.style.setProperty('--primary-hover', CONFIG.THEME.primaryHover);
+    root.style.setProperty('--accent-color', CONFIG.THEME.accentColor);
+    root.style.setProperty('--bg-light', CONFIG.THEME.backgroundLight);
+    root.style.setProperty('--card-bg', CONFIG.THEME.cardBackground);
+    root.style.setProperty('--text-main', CONFIG.THEME.textMain);
+    root.style.setProperty('--text-muted', CONFIG.THEME.textMuted);
+    root.style.setProperty('--border-color', CONFIG.THEME.borderColor);
 
-    // 2. Build Logo Components inside layout dynamically
-    const logoContainer = document.getElementById("dynamic-logo-container");
-    logoContainer.innerHTML = `${CONFIG.logoTextPrimary}<span>${CONFIG.logoTextAccent}</span>`;
-    
-    const footerLogo = document.getElementById("footer-logo-anchor");
-    footerLogo.innerHTML = `${CONFIG.logoTextPrimary}<span>${CONFIG.logoTextAccent}</span>`;
+    // ব্র্যান্ডিং কন্টেন্ট সেটআপ
+    document.title = `${CONFIG.BRAND.name} | Premium Shop`;
+    document.getElementById("checkoutSubtitle").innerText = CONFIG.BRAND.tagline;
+    document.getElementById("currencySymbol").innerText = CONFIG.BRAND.currencySymbol;
 
-    // 3. Populate Hero Banner using configuration variables
-    document.getElementById("hero-badge").textContent = CONFIG.hero.badge;
-    document.getElementById("hero-title").textContent = CONFIG.hero.title;
-    document.getElementById("hero-desc").textContent = CONFIG.hero.description;
-    
-    const heroBtn = document.getElementById("hero-btn");
-    heroBtn.textContent = CONFIG.hero.buttonText;
-    heroBtn.setAttribute("href", CONFIG.hero.buttonLink);
-
-    // 4. Mount Select Dropdown Option Tags using configuration metrics
-    document.getElementById("opt-inside").textContent = `Inside Dhaka (${CONFIG.currencySymbol}${CONFIG.shipping.insideDhaka})`;
-    document.getElementById("opt-outside").textContent = `Outside Dhaka (${CONFIG.currencySymbol}${CONFIG.shipping.outsideDhaka})`;
-
-    // 5. Mount texts inside active DOM sections
-    document.getElementById("footer-about-paragraph").textContent = CONFIG.footer.aboutText;
-    document.getElementById("footer-copyright-string").textContent = CONFIG.footer.copyright;
-
-    // 6. Trigger transactional operations rendering
-    renderProductGrid();
-    updateCartUI();
-}
-
-// Map database array elements to active CSS template grid
-function renderProductGrid() {
-    const container = document.getElementById("product-list");
-    if (!container) return;
-    
-    container.innerHTML = CONFIG.products.map(product => `
-        <div class="product-item">
-            <div class="product-img-frame">
-                <img src="${product.image}" alt="${product.title}" loading="lazy">
-            </div>
-            <div class="product-info">
-                <h3 class="p-title">${product.title}</h3>
-                <div class="p-rating">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star-half-stroke"></i>
-                    <span>(${product.rating})</span>
-                </div>
-                <div class="p-price">${CONFIG.currencySymbol} ${product.price.toLocaleString()}</div>
-                <button class="btn-buy-now" onclick="addItemToCart(${product.id})">
-                    <i class="fa-solid fa-cart-plus"></i> Buy Now / Order
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Side Cart Window View toggling
-function toggleCart() {
-    document.getElementById("cartDrawer").classList.toggle("open");
-    document.getElementById("cartOverlay").classList.toggle("open");
-}
-
-// Handle cart calculations operations pipeline
-function addItemToCart(productId) {
-    const item = CONFIG.products.find(p => p.id === productId);
-    const existing = cart.find(c => c.id === productId);
-    
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({ ...item, quantity: 1 });
-    }
-    
-    updateCartUI();
-    toggleCart(); // Slide open cart drawer modal layer instantly like premium Shopify frameworks
-}
-
-function removeCartItem(id) {
-    cart = cart.filter(item => item.id !== id);
-    updateCartUI();
-}
-
-// Synchronize all items total pricing inside standard viewport fields
-function updateCartUI() {
-    const counts = document.querySelectorAll(".cart-count");
-    const totalItems = cart.reduce((acc, current) => acc + current.quantity, 0);
-    counts.forEach(el => el.textContent = totalItems);
-    
-    const cartContainer = document.getElementById("cartItemsContainer");
-    const subtotalPriceEl = document.querySelector(".subtotal-price");
-    
-    const subtotal = cart.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-    subtotalPriceEl.textContent = `${CONFIG.currencySymbol} ${subtotal.toLocaleString()}`;
-
-    if(cart.length === 0) {
-        cartContainer.innerHTML = `
-            <div class="empty-cart-msg">
-                <i class="fa-solid fa-basket-shopping"></i>
-                <p>Your shopping cart is currently empty.</p>
-            </div>
+    const brandContainer = document.getElementById("headerLogo");
+    if (brandContainer) {
+        brandContainer.innerHTML = `
+            <i class="${CONFIG.BRAND.logoIcon} brand-icon"></i>
+            <h2>${CONFIG.BRAND.name}</h2>
         `;
-    } else {
-        cartContainer.innerHTML = cart.map(item => `
-            <div class="cart-prod-item">
-                <div class="cart-prod-img"><img src="${item.image}"></div>
-                <div class="cart-prod-details">
-                    <h5>${item.title}</h5>
-                    <p>${item.quantity} x ${CONFIG.currencySymbol}${item.price.toLocaleString()}</p>
-                </div>
-                <button class="remove-cart-item" onclick="removeCartItem(${item.id})">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-        `).join('');
-    }
-    
-    updateCheckoutSummary(subtotal);
-}
-
-// Synchronize inside sidebar panel order summaries tracking module
-function updateCheckoutSummary(subtotal) {
-    const summaryItemsContainer = document.getElementById("checkoutSummaryItems");
-    const itemsTotalEl = document.getElementById("summaryItemsTotal");
-    const shippingEl = document.getElementById("summaryShipping");
-    const grandTotalEl = document.getElementById("summaryGrandTotal");
-    
-    if(!summaryItemsContainer) return;
-
-    if(cart.length === 0) {
-        summaryItemsContainer.innerHTML = `<p class="text-muted">No operational lines selected.</p>`;
-        itemsTotalEl.textContent = `${CONFIG.currencySymbol} 0`;
-        shippingEl.textContent = `${CONFIG.currencySymbol} ${shippingCost}`;
-        grandTotalEl.textContent = `${CONFIG.currencySymbol} 0`;
-        return;
     }
 
-    summaryItemsContainer.innerHTML = cart.map(item => `
-        <div class="summary-item-row">
-            <span>${item.title} <strong>(x${item.quantity})</strong></span>
-            <span>${CONFIG.currencySymbol} ${(item.price * item.quantity).toLocaleString()}</span>
-        </div>
-    `).join('');
+    // ডেলিভারি লেবেল এবং কস্ট টেক্সট সেটআপ
+    document.getElementById("insideLabel").innerText = CONFIG.DELIVERY.insideDhaka.label;
+    document.getElementById("insideCostText").innerText = `${CONFIG.BRAND.currencySymbol} ${CONFIG.DELIVERY.insideDhaka.charge}`;
+    document.getElementById("outsideLabel").innerText = CONFIG.DELIVERY.outsideDhaka.label;
+    document.getElementById("outsideCostText").innerText = `${CONFIG.BRAND.currencySymbol} ${CONFIG.DELIVERY.outsideDhaka.charge}`;
 
-    itemsTotalEl.textContent = `${CONFIG.currencySymbol} ${subtotal.toLocaleString()}`;
-    shippingEl.textContent = `${CONFIG.currencySymbol} ${shippingCost}`;
-    grandTotalEl.textContent = `${CONFIG.currencySymbol} ${(subtotal + shippingCost).toLocaleString()}`;
-}
-
-// Recalculate billing values automatically when shipping parameters mutation occurs
-function updateShippingPrice() {
-    const citySelect = document.getElementById("city");
-    shippingCost = citySelect.value === "Dhaka" ? CONFIG.shipping.insideDhaka : CONFIG.shipping.outsideDhaka;
-    
-    const subtotal = cart.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-    updateCheckoutSummary(subtotal);
-}
-
-// Redirect client to target anchor block form view context
-function scrollToCheckout() {
-    toggleCart(); 
-    const checkoutArea = document.getElementById("checkout-area");
-    if(checkoutArea) {
-        checkoutArea.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// Setup listeners to handle visually selected inputs toggles
-document.addEventListener('DOMContentLoaded', () => {
-    const options = document.querySelectorAll('.payment-option');
-    options.forEach(option => {
-        option.addEventListener('click', function() {
-            options.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            this.querySelector('input[type="radio"]').checked = true;
-        });
-    });
+    // শপ কন্টাক্ট ডাটা লোড
+    loadShopProducts();
+    setupCheckoutEventListeners();
 });
 
-// Mock submission validation processor endpoint
-function handleOrderSubmit(e) {
-    e.preventDefault();
-    if(cart.length === 0) {
-        alert("Your transaction matrix contains no assets! Order submission cancelled.");
-        return;
-    }
-    
-    const name = document.getElementById("fullName").value;
-    const phone = document.getElementById("phone").value;
-    const addr = document.getElementById("address").value;
-    
-    alert(`🎉 Order Dispatched Successfully via CRM Setup!\n\nClient Name: ${name}\nShipping Targets: ${addr}\nContact Channel: ${phone}\n\nOur service line will sync tracking parameters shorty.`);
-    
-    cart = [];
-    updateCartUI();
-    document.getElementById("orderForm").reset();
+// ২. কাস্টম প্রোডাক্ট লোড করা
+function loadShopProducts() {
+    const productGrid = document.getElementById("productGrid");
+    productGrid.innerHTML = "";
+
+    CONFIG.PRODUCTS.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+            <div class="prod-img-wrap">
+                <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <div class="price-row">
+                    <span class="card-price">${CONFIG.BRAND.currencySymbol} ${product.price}</span>
+                </div>
+                <button class="buy-btn" onclick="openCheckout(${product.id})">
+                    <i class="fa-solid fa-bolt"></i> Order Now
+                </button>
+            </div>
+        `;
+        productGrid.appendChild(card);
+    });
 }
 
-// Execute core rendering framework lifecycles instantly
-window.onload = initializeWebsite;
+// ৩. চেকআউট মডাল ওপেন লজিক
+function openCheckout(productId) {
+    selectedProduct = CONFIG.PRODUCTS.find(p => p.id === productId);
+    currentQuantity = 1;
+    
+    document.getElementById("modalProductName").innerText = selectedProduct.name;
+    document.getElementById("modalProductPrice").innerText = selectedProduct.price;
+    document.getElementById("modalProductImg").src = selectedProduct.image;
+    document.getElementById("quantityInput").value = currentQuantity;
+    
+    const badgeEl = document.getElementById("modalProductBadge");
+    badgeEl.innerHTML = `<span class="dot"></span> ${selectedProduct.badge || 'In Stock'}`;
+
+    updateCalculations();
+    document.getElementById("checkoutModal").style.display = "flex";
+}
+
+// ৪. রিয়েল-টাইম এমাউন্ট ক্যালকুলেশন
+function updateCalculations() {
+    if (!selectedProduct) return;
+
+    const productTotal = selectedProduct.price * currentQuantity;
+    const finalTotal = productTotal + deliveryCharge;
+
+    document.getElementById("summaryProductPrice").innerText = productTotal.toLocaleString();
+    document.getElementById("summaryDeliveryCharge").innerText = deliveryCharge;
+    document.getElementById("summaryTotalAmount").innerText = finalTotal.toLocaleString();
+}
+
+// ৫. ফর্ম কন্ট্রোল এবং ইভেন্ট হ্যান্ডলার্স
+function setupCheckoutEventListeners() {
+    const modal = document.getElementById("checkoutModal");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const plusBtn = document.getElementById("plusBtn");
+    const minusBtn = document.getElementById("minusBtn");
+    
+    // মডাল এক্সিট
+    closeBtn.addEventListener("click", () => modal.style.display = "none");
+    window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+
+    // কোয়ান্টিটি বৃদ্ধি
+    plusBtn.addEventListener("click", () => {
+        currentQuantity++;
+        document.getElementById("quantityInput").value = currentQuantity;
+        updateCalculations();
+    });
+
+    // কোয়ান্টিটি কমানো
+    minusBtn.addEventListener("click", () => {
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            document.getElementById("quantityInput").value = currentQuantity;
+            updateCalculations();
+        }
+    });
+
+    // ডেলিভারি লোকেশন সুইচ লজিক
+    const deliveryCards = document.querySelectorAll(".delivery-card");
+    deliveryCards.forEach(card => {
+        card.addEventListener("click", function() {
+            deliveryCards.forEach(c => c.classList.remove("checked"));
+            this.classList.add("checked");
+            
+            const radioVal = this.querySelector("input").value;
+            deliveryCharge = radioVal === "inside" ? CONFIG.DELIVERY.insideDhaka.charge : CONFIG.DELIVERY.outsideDhaka.charge;
+            updateCalculations();
+        });
+    });
+
+    // পেমেন্ট মেথড সুইচ ও ডিসপ্লে নোটিস
+    const paymentCards = document.querySelectorAll(".payment-card");
+    const instructionPanel = document.getElementById("paymentInstructionPanel");
+    const instructionText = document.getElementById("instructionText");
+
+    paymentCards.forEach(card => {
+        card.addEventListener("click", function() {
+            paymentCards.forEach(c => c.classList.remove("checked"));
+            this.classList.add("checked");
+            
+            const method = this.getAttribute("data-method");
+            if (method === "bKash") {
+                instructionPanel.style.display = "block";
+                instructionText.innerHTML = `💸 অনুগ্রহ করে আমাদের পার্সোনাল বিকাশ নাম্বার <strong>${CONFIG.PAYMENT.bKashNumber}</strong> এ ক্যাশ-আউট / সেন্ট-মানি করুন।`;
+            } else if (method === "Nagad") {
+                instructionPanel.style.display = "block";
+                instructionText.innerHTML = `💸 অনুগ্রহ করে আমাদের পার্সোনাল নগদ নাম্বার <strong>${CONFIG.PAYMENT.NagadNumber}</strong> এ ক্যাশ-আউট / সেন্ট-মানি করুন।`;
+            } else {
+                instructionPanel.style.display = "none";
+            }
+        });
+    });
+
+    // ৬. গুগল শিটে ডাটা সাবমিট
+    const form = document.getElementById("orderForm");
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Order...`;
+
+        const orderData = {
+            productName: selectedProduct.name,
+            quantity: currentQuantity,
+            price: selectedProduct.price,
+            totalPrice: (selectedProduct.price * currentQuantity) + deliveryCharge,
+            name: document.getElementById("fullName").value,
+            phone: document.getElementById("phoneNumber").value,
+            address: document.getElementById("fullAddress").value,
+            district: document.getElementById("districtSelect").value,
+            postCode: document.getElementById("postCode").value || "N/A",
+            email: document.getElementById("customerEmail").value,
+            note: document.getElementById("orderNote").value || "N/A",
+            delivery: document.querySelector('input[name="deliveryLocation"]:checked').value === "inside" ? CONFIG.DELIVERY.insideDhaka.label : CONFIG.DELIVERY.outsideDhaka.label,
+            payment: document.querySelector('input[name="paymentMethod"]:checked').value,
+            adminEmail: CONFIG.BRAND.adminEmail,
+            websiteName: CONFIG.BRAND.name
+        };
+
+        fetch(CONFIG.API_URL, {
+            method: "POST",
+            mode: "no-cors", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData)
+        })
+        .then(() => {
+            alert(`🎉 অভিনন্দন! আপনার অর্ডারটি সফলভাবে সম্পন্ন হয়েছে।\nঅর্ডার ইনভয়েসটি আপনার ইমেইল (${orderData.email}) এবং অ্যাডমিনের ইমেইলে পাঠিয়ে দেওয়া হয়েছে।`);
+            form.reset();
+            modal.style.display = "none";
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("দুঃখিত! এই মুহূর্তে সার্ভার কানেক্ট করা যাচ্ছে না। দয়া করে আবার চেষ্টা করুন।");
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Confirm Order <i class="fa-solid fa-arrow-right arrow-icon"></i>`;
+        });
+    });
+}
+
+                                 
