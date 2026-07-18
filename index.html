@@ -3,258 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="site-title-tag">E-Commerce Store</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- FontAwesome Font Rendering Framework -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>NexCartBD | Home</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Top Utility Ribbon -->
-    <div class="top-bar">
-        <div class="container flex-between">
-            <div class="top-left" id="top-bar-announcement">Welcome to our store</div>
-            <div class="top-right">
-                <a href="#"><i class="fa-solid fa-truck-fast"></i> Track Order</a> | 
-                <a href="#"><i class="fa-solid fa-headset"></i> Support</a>
+    <!-- Dynamic Header -->
+    <header class="main-header" id="mainHeader">
+        <div class="header-container">
+            <div class="logo" id="headerLogo">
+                <!-- Javascript will load branding here -->
             </div>
-        </div>
-    </div>
-
-    <!-- Main Navigation Architecture -->
-    <header class="main-header">
-        <div class="container header-grid">
-            <div class="logo">
-                <a href="index.html" id="dynamic-logo-container"><!-- Dynamic Logo Injected Here --></a>
-            </div>
-            <div class="search-box">
-                <input type="text" placeholder="Search product catalogs, active deals...">
-                <button><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
-            <div class="header-actions">
-                <a href="#" class="action-btn"><i class="fa-regular fa-user"></i> <span>Login</span></a>
-                <a href="#" class="action-btn cart-toggle" onclick="toggleCart()">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    <span class="cart-count">0</span>
-                </a>
+            <div class="security-badge">
+                <i class="fa-solid fa-shield-halved secure-icon"></i>
+                <div>
+                    <p class="secure-title">100% Secure</p>
+                    <p class="secure-subtitle">Your data is safe</p>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Category Toolbar -->
-    <nav class="category-nav">
-        <div class="container">
-            <ul class="nav-links">
-                <li><a href="#" class="active"><i class="fa-solid fa-bars"></i> All Categories</a></li>
-                <li><a href="#">Smartphones</a></li>
-                <li><a href="#">Smart Watches</a></li>
-                <li><a href="#">Earbuds & Audio</a></li>
-                <li><a href="#">Power Banks</a></li>
-                <li><a href="#">Accessories</a></li>
-                <li><a href="#" class="text-danger">Flash Sale</a></li>
-            </ul>
+    <!-- Shop Catalog -->
+    <main class="shop-container">
+        <div class="section-title">
+            <h2 id="shopTitle">Our Premium Collection</h2>
+            <p>Pick your desired items and experience hassle-free express delivery</p>
         </div>
-    </nav>
-
-    <!-- Dynamic Hero Showcase Banner -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-slider" id="dynamic-hero-slider">
-                <div class="slide-content">
-                    <span class="badge" id="hero-badge">Loading...</span>
-                    <h1 id="hero-title">Loading Banner Title...</h1>
-                    <p id="hero-desc">Loading system configurations...</p>
-                    <a href="#products-grid" class="btn btn-primary" id="hero-btn">Shop Now</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Standard Store Trust Badges -->
-    <section class="features-section">
-        <div class="container features-grid">
-            <div class="feature-card">
-                <i class="fa-solid fa-shield-halved"></i>
-                <div>
-                    <h4>Official Warranty</h4>
-                    <p>Brand authorized coverage</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-rotate-left"></i>
-                <div>
-                    <h4>7 Days Return</h4>
-                    <p>Hassle-free refund policy</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-truck-ramp-box"></i>
-                <div>
-                    <h4>Safe Shipping</h4>
-                    <p>Top logistic partner routing</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-credit-card"></i>
-                <div>
-                    <h4>Secure System</h4>
-                    <p>Verified checkout protection</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Dynamic Inventory Grid -->
-    <main class="container" id="products-grid">
-        <div class="section-header">
-            <h2 class="section-title">Trending Catalog Collection</h2>
-            <a href="#" class="view-all">View All <i class="fa-solid fa-angle-right"></i></a>
-        </div>
-        <div class="products-container" id="product-list">
-            <!-- Programmatic script generation rendering zone -->
+        
+        <div class="product-grid" id="productGrid">
+            <!-- Dynamic products from config.js load here -->
         </div>
     </main>
 
-    <!-- Interactive Shopify Side Drawer Modal -->
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="drawer-header">
-            <h3>Shopping Cart (<span class="cart-count">0</span>)</h3>
-            <button class="close-drawer" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="drawer-body" id="cartItemsContainer">
-            <div class="empty-cart-msg">
-                <i class="fa-solid fa-basket-shopping"></i>
-                <p>Your shopping cart is currently empty.</p>
+    <!-- Screenshot Replicated Premium Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+            
+            <div class="form-header">
+                <div class="cart-icon-wrap">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <div>
+                    <h3>Complete Your Order</h3>
+                    <p id="checkoutSubtitle">Fill the form below to place your order</p>
+                </div>
             </div>
-        </div>
-        <div class="drawer-footer">
-            <div class="subtotal-box flex-between">
-                <span>Estimated Subtotal:</span>
-                <span class="subtotal-price">0</span>
+
+            <form id="orderForm">
+                <!-- Product Information Section (Matches Mockup) -->
+                <div class="form-section product-summary-card">
+                    <div class="prod-flex-container">
+                        <div class="prod-img-box">
+                            <img id="modalProductImg" src="" alt="Selected Product">
+                        </div>
+                        <div class="prod-details-box">
+                            <h4 id="modalProductName">Loading...</h4>
+                            <span class="stock-status" id="modalProductBadge"><span class="dot"></span> In Stock</span>
+                            <div class="price-tag"><span id="currencySymbol">৳</span> <span id="modalProductPrice">0</span></div>
+                        </div>
+                        <div class="quantity-control-wrapper">
+                            <label class="qty-label">Quantity</label>
+                            <div class="quantity-picker">
+                                <button type="button" id="minusBtn"><i class="fa-solid fa-minus"></i></button>
+                                <input type="number" id="quantityInput" value="1" min="1" readonly>
+                                <button type="button" id="plusBtn"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information Section -->
+                <h3 class="section-heading"><i class="fa-solid fa-user"></i> Customer Information</h3>
+                
+                <div class="form-grid">
+                    <div class="input-group">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                        <label>Full Name</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-phone input-icon"></i>
+                        <input type="tel" id="phoneNumber" placeholder="01XXXXXXXXX" pattern="[0-9]{11}" required>
+                        <label>Phone Number</label>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group full-width">
+                        <i class="fa-solid fa-location-dot input-icon"></i>
+                        <input type="text" id="fullAddress" placeholder="House no, Road no, Area, Thana" required>
+                        <label>Full Address</label>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group select-group">
+                        <i class="fa-solid fa-map input-icon"></i>
+                        <select id="districtSelect" required>
+                            <option value="" disabled selected hidden>Select your district</option>
+                            <option value="Dhaka">Dhaka</option>
+                            <option value="Chittagong">Chittagong</option>
+                            <option value="Rajshahi">Rajshahi</option>
+                            <option value="Khulna">Khulna</option>
+                            <option value="Barisal">Barisal</option>
+                            <option value="Sylhet">Sylhet</option>
+                            <option value="Rangpur">Rangpur</option>
+                            <option value="Mymensingh">Mymensingh</option>
+                        </select>
+                        <label>District</label>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                        <input type="text" id="postCode" placeholder="Enter post code">
+                        <label>Post Code (Optional)</label>
+                    </div>
+                </div>
+
+                <!-- NEW: Email Address (Required for Customer PDF Invoicing) -->
+                <div class="form-grid">
+                    <div class="input-group full-width">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                        <input type="email" id="customerEmail" placeholder="your-email@gmail.com" required>
+                        <label>Email Address (For Invoice PDF Delivery)</label>
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <i class="fa-regular fa-note-sticky input-icon"></i>
+                    <input type="text" id="orderNote" placeholder="Any special instruction for delivery">
+                    <label>Order Note (Optional)</label>
+                </div>
+
+                <!-- Delivery Information Section -->
+                <h3 class="section-heading"><i class="fa-solid fa-truck"></i> Delivery Information</h3>
+                <div class="delivery-options">
+                    <label class="delivery-card checked" id="insideDhakaCard">
+                        <input type="radio" name="deliveryLocation" value="inside" checked>
+                        <span class="custom-radio"></span>
+                        <div class="delivery-details">
+                            <span class="delivery-title" id="insideLabel">Inside Dhaka</span>
+                            <span class="delivery-cost" id="insideCostText">৳ 60</span>
+                        </div>
+                    </label>
+                    <label class="delivery-card" id="outsideDhakaCard">
+                        <input type="radio" name="deliveryLocation" value="outside">
+                        <span class="custom-radio"></span>
+                        <div class="delivery-details">
+                            <span class="delivery-title" id="outsideLabel">Outside Dhaka</span>
+                            <span class="delivery-cost" id="outsideCostText">৳ 120</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Payment Method Section -->
+                <h3 class="section-heading"><i class="fa-solid fa-credit-card"></i> Payment Method</h3>
+                <div class="payment-options">
+                    <label class="payment-card checked" data-method="COD">
+                        <input type="radio" name="paymentMethod" value="COD" checked>
+                        <span class="custom-radio"></span>
+                        <div class="payment-details">
+                            <div class="pay-title-flex">
+                                <img src="https://img.icons8.com/color/48/money-bag-on-mud.png" alt="COD" class="pay-logo">
+                                <span class="payment-title">Cash on Delivery</span>
+                            </div>
+                            <span class="payment-subtitle">Pay when you receive</span>
+                        </div>
+                    </label>
+                    <label class="payment-card" data-method="bKash">
+                        <input type="radio" name="paymentMethod" value="bKash">
+                        <span class="custom-radio"></span>
+                        <div class="payment-details">
+                            <div class="pay-title-flex">
+                                <img src="https://i.ibb.co/b3v78fS/bkash-logo.png" alt="bKash" class="pay-logo width-adjust">
+                                <span class="payment-title">bKash</span>
+                            </div>
+                            <span class="payment-subtitle">Pay with bKash</span>
+                        </div>
+                    </label>
+                    <label class="payment-card" data-method="Nagad">
+                        <input type="radio" name="paymentMethod" value="Nagad">
+                        <span class="custom-radio"></span>
+                        <div class="payment-details">
+                            <div class="pay-title-flex">
+                                <img src="https://i.ibb.co/VvZ64m8/nagad-logo.png" alt="Nagad" class="pay-logo width-adjust">
+                                <span class="payment-title">Nagad</span>
+                            </div>
+                            <span class="payment-subtitle">Pay with Nagad</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Payment Instructions (Shown dynamically based on choice) -->
+                <div class="payment-instructions-box" id="paymentInstructionPanel" style="display: none;">
+                    <p id="instructionText"></p>
+                </div>
+
+                <!-- Order Summary Section -->
+                <div class="order-summary-box">
+                    <h4 class="summary-heading"><i class="fa-solid fa-box-open"></i> Order Summary</h4>
+                    <div class="summary-row">
+                        <span>Product Price</span>
+                        <span>৳ <span id="summaryProductPrice">0</span></span>
+                    </div>
+                    <div class="summary-row border-bottom-dashed">
+                        <span>Delivery Charge</span>
+                        <span>৳ <span id="summaryDeliveryCharge">60</span></span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total Amount</span>
+                        <span class="total-price">৳ <span id="summaryTotalAmount">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="confirm-order-btn" id="submitBtn">
+                    <i class="fa-solid fa-lock"></i> Confirm Order <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                </button>
+            </form>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges-container">
+                <div class="badge-item">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <div>
+                        <h5>100% Original Product</h5>
+                        <p>Quality you can trust</p>
+                    </div>
+                </div>
+                <div class="badge-item">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <div>
+                        <h5>Fast Delivery</h5>
+                        <p>Quick & safe delivery</p>
+                    </div>
+                </div>
+                <div class="badge-item">
+                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                    <div>
+                        <h5>Easy Returns</h5>
+                        <p>7 day return policy</p>
+                    </div>
+                </div>
             </div>
-            <button class="btn btn-secondary checkout-trigger" onclick="scrollToCheckout()">Proceed To Checkout</button>
         </div>
     </div>
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
 
-    <!-- Dual-Column Checkout Infrastructure Area -->
-    <section class="checkout-section container" id="checkout-area">
-        <div class="checkout-grid">
-            
-            <!-- Customer Validation Billing Node -->
-            <div class="checkout-form-card">
-                <h3 class="checkout-title"><i class="fa-solid fa-location-dot"></i> Delivery & Billing Information</h3>
-                <form id="orderForm" onsubmit="handleOrderSubmit(event)">
-                    <div class="form-group">
-                        <label for="fullName">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="fullName" required placeholder="Enter your full legal name">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">Mobile Number <span class="text-danger">*</span></label>
-                            <input type="tel" id="phone" required placeholder="01XXXXXXXXX">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address (Optional)</label>
-                            <input type="email" id="email" placeholder="name@domain.com">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Full Delivery Address <span class="text-danger">*</span></label>
-                        <textarea id="address" rows="3" required placeholder="House details, street mapping, localized region context..."></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="city">City / Region Selector <span class="text-danger">*</span></label>
-                            <select id="city" required onchange="updateShippingPrice()">
-                                <option value="Dhaka" id="opt-inside">Inside Dhaka</option>
-                                <option value="Outside" id="opt-outside">Outside Dhaka</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <h3 class="checkout-title" style="margin-top: 25px;"><i class="fa-solid fa-credit-card"></i> Payment Processing Route</h3>
-                    <div class="payment-methods">
-                        <label class="payment-option active">
-                            <input type="radio" name="payment" value="COD" checked>
-                            <div class="option-info">
-                                <strong>Cash on Delivery (COD)</strong>
-                                <p>Pay safely with cash right at your doorstep</p>
-                            </div>
-                        </label>
-                        <label class="payment-option">
-                            <input type="radio" name="payment" value="Digital">
-                            <div class="option-info">
-                                <strong>Mobile Wallets / MFS Gateways</strong>
-                                <p>Instant secure transfer via bKash, Nagad or Visa/MasterCard</p>
-                            </div>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-success place-order-btn">Confirm E-Order Setup</button>
-                </form>
-            </div>
-
-            <!-- Dynamic Live Calculations Checkout Sidebar Node -->
-            <div class="checkout-summary-card">
-                <h3 class="checkout-title"><i class="fa-solid fa-list-check"></i> Order Invoice Matrix</h3>
-                <div id="checkoutSummaryItems">
-                    <p class="text-muted">No line item allocations ready.</p>
-                </div>
-                
-                <div class="summary-totals">
-                    <div class="flex-between total-row">
-                        <span>Items Valuation:</span>
-                        <span id="summaryItemsTotal">0</span>
-                    </div>
-                    <div class="flex-between total-row">
-                        <span>Logistic Fee:</span>
-                        <span id="summaryShipping">0</span>
-                    </div>
-                    <hr>
-                    <div class="flex-between total-row final-grand-total">
-                        <span>Grand Aggregate:</span>
-                        <span id="summaryGrandTotal">0</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Global Layout Footer -->
-    <footer class="main-footer">
-        <div class="container footer-grid">
-            <div class="footer-about">
-                <h3 id="footer-logo-anchor">Placeholder</h3>
-                <p id="footer-about-paragraph">Loading database text components...</p>
-            </div>
-            <div class="footer-links">
-                <h4>Customer Logistics</h4>
-                <ul>
-                    <li><a href="#">Help Center Documentation</a></li>
-                    <li><a href="#">Acquisition Policy</a></li>
-                    <li><a href="#">Return Pipelines</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                </ul>
-            </div>
-            <div class="footer-newsletter">
-                <h4>Corporate Operations Hub</h4>
-                <p>Subscribe to monitor continuous inventory updates instantly.</p>
-                <div class="newsletter-input">
-                    <input type="email" placeholder="Email coordinates...">
-                    <button>Join</button>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom text-center">
-            <p id="footer-copyright-string">Processing engine metadata...</p>
-        </div>
-    </footer>
-
-    <!-- Dual dependency compilation loader system -->
-    <script src="js/config.js"></script>
-    <script src="js/script.js"></script>
+    <!-- Configuration and Logic files -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
 </body>
-                </html>
-                
+</html>
+
