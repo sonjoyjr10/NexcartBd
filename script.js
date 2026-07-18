@@ -1,4 +1,3 @@
-// FILE: script.js
 /* ============================================================
    NEXCARTBD — 2060 Storefront Engine
    Vanilla JS. Cart + Auth + Orders + Particle/Cursor FX.
