@@ -1,4 +1,3 @@
-// FILE: config.js
 // NEXCARTBD — API configuration
 // Replace API_URL with your real backend base URL.
 
