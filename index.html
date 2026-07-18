@@ -3,260 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexCartBD | Home</title>
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>NexcartBd - Premium Beats Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Style Sheet (Linked here) -->
     <link rel="stylesheet" href="style.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#e01e37',
+                            redHover: '#bd1f36',
+                            darkBg: '#0a0a0a',
+                            cardBg: '#121212',
+                            cardBorder: '#1f1f1f',
+                            textGray: '#a0a0a0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-brand-darkBg text-white min-h-screen flex flex-col font-sans overflow-x-hidden">
 
-    <!-- Dynamic Header -->
-    <header class="main-header" id="mainHeader">
-        <div class="header-container">
-            <div class="logo" id="headerLogo">
-                <!-- Javascript will load branding here -->
-            </div>
-            <div class="security-badge">
-                <i class="fa-solid fa-shield-halved secure-icon"></i>
-                <div>
-                    <p class="secure-title">100% Secure</p>
-                    <p class="secure-subtitle">Your data is safe</p>
-                </div>
-            </div>
+    <!-- Config Variable -->
+    <script>
+        const CONFIG = {
+            API_URL: "https://script.google.com/macros/s/AKfycbyXbJm9CkwarT1Rei9F9RtZWV_h7BAlGOFSAnsX1n-hW2VedO0500ROCEvT4Wn4vXo/exec",
+            WHATSAPP_NUMBER: "8801700000000", // তোমার হোয়াটসঅ্যাপ নম্বর (Country code সহ)
+            PRODUCTS: [
+                {
+                    id: "p1",
+                    name: "Mini Portable Blender",
+                    price: 1850,
+                    image: "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?auto=format&fit=crop&w=600&q=80",
+                    desc: "High-speed portable blender for instant healthy shakes and juices anywhere.",
+                    specs: ["380ml Capacity", "USB Rechargeable", "6 Stainless Steel Blades"]
+                },
+                {
+                    id: "p2",
+                    name: "Beats Solo Pro Wireless",
+                    price: 4500,
+                    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+                    desc: "Premium active noise cancelling headphones with powerful balanced sound.",
+                    specs: ["Active Noise Cancelling", "Up to 22 Hours Battery", "Apple H1 Headphone Chip"]
+                }
+            ]
+        };
+    </script>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-brand-cardBorder px-4 py-3 md:px-8 flex justify-between items-center transition-all duration-300">
+        <!-- Logo -->
+        <a href="#" onclick="showSection('home')" class="flex items-center space-x-2">
+            <span class="text-2xl font-extrabold text-white tracking-tighter">NEX<span class="text-brand-red">CART</span></span>
+            <span class="bg-brand-red text-[9px] uppercase px-1.5 py-0.5 rounded font-black tracking-widest text-white">PRO</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex space-x-8 text-sm font-semibold uppercase tracking-wider text-brand-textGray">
+            <a href="#" onclick="showSection('home')" class="hover:text-white transition-colors duration-200">Home</a>
+            <a href="#shop-section-anchor" class="hover:text-white transition-colors duration-200">Shop</a>
+            <a href="#" onclick="showSection('tracking')" class="hover:text-white transition-colors duration-200">Track Order</a>
+        </nav>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center space-x-4">
+            <!-- Cart Button -->
+            <button onclick="toggleCart()" class="relative p-2 text-brand-textGray hover:text-white transition-colors">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="cart-badge" class="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden">0</span>
+            </button>
+
+            <!-- Profile/Account Trigger -->
+            <button onclick="handleAccountNav()" class="flex items-center space-x-2 focus:outline-none bg-brand-cardBorder hover:bg-neutral-800 px-3 py-1.5 rounded-full border border-neutral-800 transition-all duration-200">
+                <img id="nav-avatar" src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile" class="w-6 h-6 rounded-full object-cover border border-brand-red">
+                <span id="nav-username" class="text-xs font-medium max-w-[80px] truncate">Guest</span>
+            </button>
+            
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-white p-1">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Shop Catalog -->
-    <main class="shop-container">
-        <div class="section-title">
-            <h2 id="shopTitle">Our Premium Collection</h2>
-            <p>Pick your desired items and experience hassle-free express delivery</p>
-        </div>
-        
-        <div class="product-grid" id="productGrid">
-            <!-- Dynamic products from config.js load here -->
-        </div>
-    </main>
-
-    <!-- Screenshot Replicated Premium Checkout Modal -->
-    <div class="checkout-modal" id="checkoutModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeModalBtn">&times;</button>
-            
-            <div class="form-header">
-                <div class="cart-icon-wrap">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                </div>
-                <div>
-                    <h3>Complete Your Order</h3>
-                    <p id="checkoutSubtitle">Fill the form below to place your order</p>
-                </div>
-            </div>
-
-            <form id="orderForm">
-                <!-- Product Information Section (Matches Mockup) -->
-                <div class="form-section product-summary-card">
-                    <div class="prod-flex-container">
-                        <div class="prod-img-box">
-                            <img id="modalProductImg" src="" alt="Selected Product">
-                        </div>
-                        <div class="prod-details-box">
-                            <h4 id="modalProductName">Loading...</h4>
-                            <span class="stock-status" id="modalProductBadge"><span class="dot"></span> In Stock</span>
-                            <div class="price-tag"><span id="currencySymbol">৳</span> <span id="modalProductPrice">0</span></div>
-                        </div>
-                        <div class="quantity-control-wrapper">
-                            <label class="qty-label">Quantity</label>
-                            <div class="quantity-picker">
-                                <button type="button" id="minusBtn"><i class="fa-solid fa-minus"></i></button>
-                                <input type="number" id="quantityInput" value="1" min="1" readonly>
-                                <button type="button" id="plusBtn"><i class="fa-solid fa-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Customer Information Section -->
-                <h3 class="section-heading"><i class="fa-solid fa-user"></i> Customer Information</h3>
-                
-                <div class="form-grid">
-                    <div class="input-group">
-                        <i class="fa-regular fa-user input-icon"></i>
-                        <input type="text" id="fullName" placeholder="Enter your full name" required>
-                        <label>Full Name</label>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-phone input-icon"></i>
-                        <input type="tel" id="phoneNumber" placeholder="01XXXXXXXXX" pattern="[0-9]{11}" required>
-                        <label>Phone Number</label>
-                    </div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="input-group full-width">
-                        <i class="fa-solid fa-location-dot input-icon"></i>
-                        <input type="text" id="fullAddress" placeholder="House no, Road no, Area, Thana" required>
-                        <label>Full Address</label>
-                    </div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="input-group select-group">
-                        <i class="fa-solid fa-map input-icon"></i>
-                        <select id="districtSelect" required>
-                            <option value="" disabled selected hidden>Select your district</option>
-                            <option value="Dhaka">Dhaka</option>
-                            <option value="Chittagong">Chittagong</option>
-                            <option value="Rajshahi">Rajshahi</option>
-                            <option value="Khulna">Khulna</option>
-                            <option value="Barisal">Barisal</option>
-                            <option value="Sylhet">Sylhet</option>
-                            <option value="Rangpur">Rangpur</option>
-                            <option value="Mymensingh">Mymensingh</option>
-                        </select>
-                        <label>District</label>
-                        <i class="fa-solid fa-chevron-down select-arrow"></i>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-regular fa-envelope input-icon"></i>
-                        <input type="text" id="postCode" placeholder="Enter post code">
-                        <label>Post Code (Optional)</label>
-                    </div>
-                </div>
-
-                <!-- NEW: Email Address (Required for Customer PDF Invoicing) -->
-                <div class="form-grid">
-                    <div class="input-group full-width">
-                        <i class="fa-regular fa-envelope input-icon"></i>
-                        <input type="email" id="customerEmail" placeholder="your-email@gmail.com" required>
-                        <label>Email Address (For Invoice PDF Delivery)</label>
-                    </div>
-                </div>
-
-                <div class="input-group full-width">
-                    <i class="fa-regular fa-note-sticky input-icon"></i>
-                    <input type="text" id="orderNote" placeholder="Any special instruction for delivery">
-                    <label>Order Note (Optional)</label>
-                </div>
-
-                <!-- Delivery Information Section -->
-                <h3 class="section-heading"><i class="fa-solid fa-truck"></i> Delivery Information</h3>
-                <div class="delivery-options">
-                    <label class="delivery-card checked" id="insideDhakaCard">
-                        <input type="radio" name="deliveryLocation" value="inside" checked>
-                        <span class="custom-radio"></span>
-                        <div class="delivery-details">
-                            <span class="delivery-title" id="insideLabel">Inside Dhaka</span>
-                            <span class="delivery-cost" id="insideCostText">৳ 60</span>
-                        </div>
-                    </label>
-                    <label class="delivery-card" id="outsideDhakaCard">
-                        <input type="radio" name="deliveryLocation" value="outside">
-                        <span class="custom-radio"></span>
-                        <div class="delivery-details">
-                            <span class="delivery-title" id="outsideLabel">Outside Dhaka</span>
-                            <span class="delivery-cost" id="outsideCostText">৳ 120</span>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Payment Method Section -->
-                <h3 class="section-heading"><i class="fa-solid fa-credit-card"></i> Payment Method</h3>
-                <div class="payment-options">
-                    <label class="payment-card checked" data-method="COD">
-                        <input type="radio" name="paymentMethod" value="COD" checked>
-                        <span class="custom-radio"></span>
-                        <div class="payment-details">
-                            <div class="pay-title-flex">
-                                <img src="https://img.icons8.com/color/48/money-bag-on-mud.png" alt="COD" class="pay-logo">
-                                <span class="payment-title">Cash on Delivery</span>
-                            </div>
-                            <span class="payment-subtitle">Pay when you receive</span>
-                        </div>
-                    </label>
-                    <label class="payment-card" data-method="bKash">
-                        <input type="radio" name="paymentMethod" value="bKash">
-                        <span class="custom-radio"></span>
-                        <div class="payment-details">
-                            <div class="pay-title-flex">
-                                <img src="https://i.ibb.co/b3v78fS/bkash-logo.png" alt="bKash" class="pay-logo width-adjust">
-                                <span class="payment-title">bKash</span>
-                            </div>
-                            <span class="payment-subtitle">Pay with bKash</span>
-                        </div>
-                    </label>
-                    <label class="payment-card" data-method="Nagad">
-                        <input type="radio" name="paymentMethod" value="Nagad">
-                        <span class="custom-radio"></span>
-                        <div class="payment-details">
-                            <div class="pay-title-flex">
-                                <img src="https://i.ibb.co/VvZ64m8/nagad-logo.png" alt="Nagad" class="pay-logo width-adjust">
-                                <span class="payment-title">Nagad</span>
-                            </div>
-                            <span class="payment-subtitle">Pay with Nagad</span>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Payment Instructions (Shown dynamically based on choice) -->
-                <div class="payment-instructions-box" id="paymentInstructionPanel" style="display: none;">
-                    <p id="instructionText"></p>
-                </div>
-
-                <!-- Order Summary Section -->
-                <div class="order-summary-box">
-                    <h4 class="summary-heading"><i class="fa-solid fa-box-open"></i> Order Summary</h4>
-                    <div class="summary-row">
-                        <span>Product Price</span>
-                        <span>৳ <span id="summaryProductPrice">0</span></span>
-                    </div>
-                    <div class="summary-row border-bottom-dashed">
-                        <span>Delivery Charge</span>
-                        <span>৳ <span id="summaryDeliveryCharge">60</span></span>
-                    </div>
-                    <div class="summary-row total-row">
-                        <span>Total Amount</span>
-                        <span class="total-price">৳ <span id="summaryTotalAmount">0</span></span>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="confirm-order-btn" id="submitBtn">
-                    <i class="fa-solid fa-lock"></i> Confirm Order <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </button>
-            </form>
-
-            <!-- Trust Badges -->
-            <div class="trust-badges-container">
-                <div class="badge-item">
-                    <i class="fa-regular fa-circle-check"></i>
-                    <div>
-                        <h5>100% Original Product</h5>
-                        <p>Quality you can trust</p>
-                    </div>
-                </div>
-                <div class="badge-item">
-                    <i class="fa-solid fa-truck-fast"></i>
-                    <div>
-                        <h5>Fast Delivery</h5>
-                        <p>Quick & safe delivery</p>
-                    </div>
-                </div>
-                <div class="badge-item">
-                    <i class="fa-solid fa-arrow-rotate-left"></i>
-                    <div>
-                        <h5>Easy Returns</h5>
-                        <p>7 day return policy</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 z-40 w-64 bg-black/95 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col p-6 pt-20 border-l border-brand-cardBorder">
+        <button onclick="toggleMobileMenu()" class="absolute top-4 right-4 text-white text-2xl">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <nav class="flex flex-col space-y-6 text-lg font-medium tracking-wider uppercase">
+            <a href="#" onclick="showSection('home'); toggleMobileMenu()" class="hover:text-brand-red">Home</a>
+            <a href="#shop-section-anchor" onclick="toggleMobileMenu()" class="hover:text-brand-red">Shop</a>
+            <a href="#" onclick="showSection('tracking'); toggleMobileMenu()" class="hover:text-brand-red">Track Order</a>
+            <a href="#" onclick="handleAccountNav(); toggleMobileMenu()" class="hover:text-brand-red">My Account</a>
+        </nav>
     </div>
 
-    <!-- Configuration and Logic files -->
-    <script src="config.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+    <!-- MAIN SECTIONS CONTAINER -->
+    <main class="flex-grow">
+        
+        <!-- SECTION 1: HOME (INTEGRATED HOMEPAGE & SHOP GRID) -->
+        <section id="section-home" class="section-view">
+            <!-- Hero banner (Beats Style) -->
+            <div class="px-4 py-8 md:py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-center md:text-left">
+                    <span class="text-brand-red text-sm font-bold tracking-widest uppercase bg-brand-red/10 px-3 py-1.5 rounded-full inline-block">The Premium Experience</span>
+                    <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight leading-none">
+                        SOUND THAT <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-rose-400">DEFINES YOU</span>
+                    </h1>
+                    <p class="text-brand-textGray text-base max-w-lg mx-auto md:mx-0">
+                        আমাদের স্পেশাল প্রিমিয়াম ব্লেন্ডার এবং অডিও গ্যাজেটের লাক্সারি কালেকশন। আজই ইউজার অ্যাকাউন্ট খুলুন এবং সরাসরি অর্ডার ও ট্র্যাকিং করুন খুব সহজে।
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                        <a href="#shop-section-anchor" class="bg-brand-red hover:bg-brand-redHover text-white font-extrabold text-center uppercase px-8 py-4 rounded-full tracking-wider transition-all duration-300 shadow-lg shadow-brand-red/30">Shop Collection</a>
+                        <button onclick="showSection('tracking')" class="border-2 border-white/20 hover:border-white text-white font-extrabold uppercase px-8 py-4 rounded-full tracking-wider transition-all duration-300">Track Order</button>
+                    </div>
+                </div>
+                
+                <div class="relative flex justify-center items-center">
+                    <div class="absolute w-72 h-72 bg-brand-red/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                    <svg viewBox="0 0 200 200" class="w-full max-w-[360px] drop-shadow-[0_20px_50px_rgba(224,30,55,0.3)] animate-bounce duration-1000" style="animation-duration: 4s">
+                        <path d="M40,110 C40,60 160,60 160,110" fill="none" stroke="#e01e37" stroke-width="12" stroke-linecap="round"/>
+                        <rect x="25" y="100" width="25" height="50" rx="10" fill="#121212" stroke="#e01e37" stroke-width="4"/>
+                        <rect x="150" y="100" width="25" height="50" rx="10" fill="#121212" stroke="#e01e37" stroke-width="4"/>
+                        <rect x="42" y="105" width="8" height="40" rx="4" fill="#ffffff" opacity="0.8" />
+                        <rect x="150" y="105" width="8" height="40" rx="4" fill="#ffffff" opacity="0.8" />
+                        <circle cx="37.5" cy="125" r="7" fill="#e01e37"/>
+                        <path d="M34,115 L34,125" stroke="#ffffff" stroke-width="2"/>
+                        <circle cx="162.5" cy="125" r="7" fill="#e01e37"/>
+                        <path d="M159,115 L159,125" stroke="#ffffff" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
 
+            <!-- Anchor for smooth scrolling -->
+            <div id="shop-section-anchor" class="h-4"></div>
+
+            <!-- Eye-Catching Search & Shop Grid Section -->
+            <div class="px-4 py-12 max-w-7xl mx-auto border-t border-brand-cardBorder/30">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black uppercase tracking-tight">Our Premium <span class="text-brand-red">Products</span></h2>
+                    <p class="text-brand-textGray text-sm mt-2">অরিজিনাল কোয়ালিটি এবং লাইভ স্টক নিশ্চয়তা।</p>
+                </div>
+
+                <!-- Glowing Eye-Catching Search Box -->
+                <div class="max-w-xl mx-auto mb-12">
+                    <div class="search-glow flex items-center bg-brand-cardBg border border-brand-cardBorder rounded-full px-6 py-4 transition-all duration-300">
+                        <i class="fa-solid fa-magnifying-glass text-brand-red text-lg mr-4"></i>
+                        <input type="text" id="product-search-input" oninput="filterProducts(this.value)" placeholder="পছন্দের প্রোডাক্টের নাম লিখে সার্চ করুন..." class="bg-transparent text-sm text-white placeholder-neutral-500 w-full focus:outline-none">
+                        <button onclick="document.getElementById('product-search-input').value = ''; filterProducts('');" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: ORDER TRACKING -->
+        <section id="section-tracking" class="section-view px-4 py-12 max-w-3xl mx-auto hidden">
+            <div class="bg-brand-cardBg border border-brand-cardBorder rounded-3xl p-6 md:p-10 space-y-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-red text-2xl">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black uppercase">Track Your Order</h2>
+                    <p class="text-brand-textGray text-xs mt-1">আপনার কাস্টমার আইডি অথবা মোবাইল নম্বর দিয়ে অর্ডার ট্র্যাক করুন।</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="track-input" placeholder="Enter Customer ID or Phone Number" class="flex-grow bg-brand-darkBg border border-brand-cardBorder rounded-full px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    <button onclick="handleTrackOrder()" class="bg-brand-red hover:bg-brand-redHover text-white font-extrabold uppercase px-8 py-4 rounded-full text-sm tracking-wider transition-all">Track</button>
+                </div>
+
+                <div id="tracking-result" class="hidden border-t border-brand-cardBorder pt-6 space-y-6"></div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: LOGIN / REGISTER PORTAL -->
+        <section id="section-auth" class="section-view px-4 py-12 max-w-md mx-auto hidden">
+            <div class="bg-brand-cardBg border border-brand-cardBorder rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="flex border-b border-brand-cardBorder">
+                    <button id="tab-login" onclick="switchAuthTab('login')" class="w-1/2 pb-3 text-center border-b-2 border-brand-red font-extrabold uppercase tracking-wider text-sm text-white">Login</button>
+                    <button id="tab-register" onclick="switchAuthTab('register')" class="w-1/2 pb-3 text-center border-b-2 border-transparent font-extrabold uppercase tracking-wider text-sm text-brand-textGray">Register</button>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Mobile Number</label>
+                        <input type="tel" id="login-phone" required placeholder="017XXXXXXXX" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <button type="submit" id="login-btn" class="w-full bg-brand-red hover:bg-brand-redHover text-white font-extrabold uppercase py-3.5 rounded-xl tracking-wider text-xs transition-all mt-2">Log In</button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Full Name</label>
+                        <input type="text" id="reg-name" required placeholder="Your Name" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Mobile Number</label>
+                        <input type="tel" id="reg-phone" required placeholder="017XXXXXXXX" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Password</label>
+                        <input type="password" id="reg-password" required placeholder="Minimum 6 characters" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-extrabold text-brand-textGray tracking-wider mb-1.5">Confirm Password</label>
+                        <input type="password" id="reg-password-confirm" required placeholder="Re-enter password" class="w-full bg-brand-darkBg border border-brand-cardBorder rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red transition-all">
+                    </div>
+                    <button type="submit" id="reg-btn" class="w-full bg-brand-red hover:bg-brand-redHover text-white font-extrabold uppercase py-3.5 rounded-xl tracking-wider text-xs transition-all mt-2">Sign Up & Register</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SIGNED IN USER PROFILE -->
+        <section id="section-account" class="section-view px-4 py-12 max-w-4xl mx-auto hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Profile Card -->
+                <div class="bg-brand-cardBg border border-brand-cardBorder rounded-3xl p-6 text-center space-y-6 flex flex-col items-center h-fit">
+                    <div class="relative group">
+                        <img id="user-avatar" src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" class="w-32 h-32 rounded-full object-cover border-4 border-brand-red/50 shadow-xl">
+                        <label for="avatar-upload" class="absolute bottom-0 right-0 bg-brand-red hover:bg-brand-redHover w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform duration-200 active:scale-95">
+                            <i class="fa-solid fa-camera text-white text-sm"></i>
+                        </label>
+                        <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="uploadAvatar(event)">
+                    </div>
+
+                    <div class="space-y-1 w-full">
+                        <h3 id="profile-name-display" class="text-xl font-bold">User Profile</h3>
+                        <p id="profile-id-display" class="text-brand-red font-mono text-xs font-semibold">NXC-U-00000</p>
+                    </div>
+
+                    <div class="w-full border-t border-brand-cardBorder pt-4 text-left space-y-3">
+                        <p class="text-xs text-brand-textGray flex justify-between"><span>Phone Number:</span> <span id="profile-phone-display" class="text-white font-semibold">Not Available</span></p>
+                        <p class="text-xs text-brand-textGray flex justify-between"><span>Active Status:</span> <span class="text-emerald-500 font-semibold flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block pulse-red"></span> Logged In</span></p>
+                    </div>
+
+                    <button onclick="handleLogout()" class="w-full bg-neutral-900 hover:bg-brand-red hover:text-white border border-neutral-800 text-brand-textGray font-extrabold uppercase py-3 rounded-xl text-xs tracking-wider transition-all">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i> Log Out
+                    </button>
+                </div>
+
+                <!-- Orders History list -->
+                <div class="md:col-span-2 bg-brand-cardBg border border-brand-cardBorder rounded-3xl p-6 md:p-8 space-y-6">
+                    <h3 class="text-xl font-black uppercase tracking-tight border-b border-brand-cardBorder pb-3">My Orders History</h3>
+                    <div id="user-orders-container" class="space-y-4">
+                        <div id="user-orders-list" class="space-y-3 max-h-[400px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT S
