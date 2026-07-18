@@ -11,7 +11,7 @@ const CONFIG = {
         name: "NexCartBD",
         tagline: "Fill the form below to place your order",
         logoIcon: "fa-solid fa-bag-shopping", // FontAwesome Icon Class
-        adminEmail: "your-shop-email@gmail.com", // এখানে আপনার নিজের শপ ইমেইল দিবেন যেখানে অর্ডারের কপি যাবে
+        adminEmail: "snbinance40@gmail.com", // এখানে আপনার নিজের শপ ইমেইল দিবেন যেখানে অর্ডারের কপি যাবে
         currencySymbol: "৳",
     },
 
