@@ -2,7 +2,7 @@ const CONFIG = {
     // ==========================================
     // ১. ব্যাকএন্ড কানেক্টিভিটি (গুগল অ্যাপস স্ক্রিপ্ট লিঙ্ক)
     // ==========================================
-    API_URL: "AKfycbyXbJm9CkwarT1Rei9F9RtZWV_h7BAlGOFSAnsX1n-hW2VedO0500ROCEvT4Wn4vXo",
+    API_URL: "https://script.google.com/macros/s/AKfycbyXbJm9CkwarT1Rei9F9RtZWV_h7BAlGOFSAnsX1n-hW2VedO0500ROCEvT4Wn4vXo/exec",
 
     // ==========================================
     // ২. ব্র্যান্ডিং এবং কন্টাক্ট ইনফরমেশন
