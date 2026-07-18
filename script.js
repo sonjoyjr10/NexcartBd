@@ -20,18 +20,26 @@
   /* ============================================================
      BOOT SCREEN
      ============================================================ */
-  window.addEventListener("load", () => {
-    const fill = $("#bootFill");
-    let p = 0;
-    const iv = setInterval(() => {
-      p += Math.random() * 25;
-      fill.style.width = Math.min(p, 100) + "%";
-      if (p >= 100) {
-        clearInterval(iv);
-        setTimeout(() => $("#bootScreen").classList.add("done"), 300);
-      }
-    }, 120);
-  });
+  function hideBootScreen() {
+  const boot = document.getElementById("bootScreen");
+  if (boot) boot.classList.add("done");
+}
+
+window.addEventListener("load", () => {
+  const fill = $("#bootFill");
+  let p = 0;
+  const iv = setInterval(() => {
+    p += Math.random() * 25;
+    if (fill) fill.style.width = Math.min(p, 100) + "%";
+    if (p >= 100) {
+      clearInterval(iv);
+      setTimeout(hideBootScreen, 300);
+    }
+  }, 120);
+});
+
+// Failsafe: force-hide boot screen after 3s no matter what happens
+setTimeout(hideBootScreen, 3000);
 
   /* ============================================================
      CUSTOM CURSOR + LIGHT TRAIL
