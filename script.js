@@ -737,3 +737,99 @@ function initCheckout() {
      API LAYER
      Actions: register, login, getProducts, create (order)
   ------------------------------------------------------------ */
+async function apiCall(action, data) {
+    const actionMap = {
+      register: API_ACTIONS.REGISTER,
+      login: API_ACTIONS.LOGIN,
+      getProducts: API_ACTIONS.GET_PRODUCTS,
+      create: API_ACTIONS.CREATE_ORDER,
+    };
+    const url = actionMap[action] || `${API_URL}/${action}`;
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}),
+      },
+      body: JSON.stringify(data || {}),
+    });
+
+    if (!res.ok) throw new Error(`API ${action} failed with status ${res.status}`);
+    return res.json();
+  }
+
+  /* ------------------------------------------------------------
+     3D TILT ON HOVER (product cards)
+  ------------------------------------------------------------ */
+  function initTiltCards() {
+    $$(".product-card").forEach((card) => {
+      if (card.dataset.tiltBound) return;
+      card.dataset.tiltBound = "1";
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const rx = ((y / rect.height) - 0.5) * -10;
+        const ry = ((x / rect.width) - 0.5) * 10;
+        card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "perspective(800px) rotateX(0) rotateY(0) translateZ(0)";
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------
+     LIQUID BUTTON RIPPLE
+  ------------------------------------------------------------ */
+  function initRippleButtons() {
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn");
+      if (!btn) return;
+      spawnRipple(e, btn);
+    });
+  }
+
+  function spawnRipple(e, btn) {
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    const size = Math.max(rect.width, rect.height);
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+    ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  }
+
+  /* ------------------------------------------------------------
+     UTIL
+  ------------------------------------------------------------ */
+  function showToast(text) {
+    const toast = $("#toast");
+    toast.textContent = text;
+    toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove("show"), 2600);
+  }
+
+  function animateStat(el, target, duration) {
+    if (!el) return;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      el.textContent = Math.floor(p * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+  }
+  function escapeAttr(str) { return escapeHtml(str); }
+  function cssEscape(str) {
+    return String(str).replace(/["\\]/g, "\\$&");
+  }
+})();
