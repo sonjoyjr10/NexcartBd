@@ -1,3 +1,4 @@
+// FILE: style.css
 :root{
   --deep-space:#02040A;
   --deep-space-2:#070B16;
@@ -402,4 +403,4 @@ section{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:100px
 }
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
-             }
+    }
