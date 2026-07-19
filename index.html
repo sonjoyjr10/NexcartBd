@@ -4,293 +4,375 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NEXCARTBD — Shopping from 2060</title>
-<meta name="description" content="NEXCARTBD — Bangladesh's most premium AI-powered e-commerce experience.">
+<meta name="description" content="NEXCARTBD — Bangladesh's quantum-fast, AI-powered shopping experience.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- CUSTOM CURSOR -->
 <div class="cursor-core" id="cursorCore"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="cursorTrail"></canvas>
 
-<!-- PARTICLE UNIVERSE -->
+<!-- PARTICLE UNIVERSE BACKGROUND -->
 <canvas id="particleField"></canvas>
+<div class="grid-overlay"></div>
 
 <!-- LOADER -->
-<div class="boot-screen" id="bootScreen">
-  <div class="boot-logo">NEXCART<span>BD</span></div>
-  <div class="boot-bar"><div class="boot-bar-fill" id="bootFill"></div></div>
-  <div class="boot-text">INITIALIZING QUANTUM STOREFRONT…</div>
+<div class="quantum-loader" id="quantumLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">INITIALIZING NEXCARTBD<span class="dots"></span></div>
 </div>
 
 <!-- HEADER -->
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
-    <a href="#home" class="logo" id="logo">
-      <span class="logo-text" data-text="NEXCARTBD">NEXCARTBD</span>
-    </a>
+    <div class="logo" data-text="NEXCARTBD">
+      <span class="logo-scan">NEXCARTBD</span>
+    </div>
 
     <nav class="main-nav" id="mainNav">
-      <a href="#home" class="nav-link active">Home</a>
-      <a href="#shop" class="nav-link">Shop</a>
-      <a href="#tracking" class="nav-link">Tracking</a>
-      <a href="#about" class="nav-link">About</a>
+      <a href="#home" class="nav-link active" data-page="home">Home</a>
+      <a href="#shop" class="nav-link" data-page="shop">Shop</a>
+      <a href="#tracking" class="nav-link" data-page="tracking">Tracking</a>
+      <a href="#about" class="nav-link" data-page="about">About</a>
     </nav>
 
     <div class="header-actions">
       <button class="icon-btn" id="aiSearchBtn" aria-label="AI Search">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 5L20.49 19zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.8l-.3-.3c1-1.1 1.6-2.6 1.6-4.2C16 6 13.3 3.3 10 3.3S4 6 4 9.5 6.7 15.7 10 15.7c1.6 0 3.1-.6 4.2-1.6l.3.3v.8l4.3 4.3 1.3-1.3L15.5 14zm-5.5 0c-2.5 0-4.5-2-4.5-4.5S7.5 5 10 5s4.5 2 4.5 4.5S12.5 14 10 14z"/></svg>
+        <span class="pulse-dot"></span>
       </button>
-      <button class="icon-btn cart-btn" id="cartBtn" aria-label="Cart">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4M1 2v2h2l3.6 7.59-1.35 2.45A2 2 0 0 0 7 17h12v-2H7l1.1-2h7.45a2 2 0 0 0 1.75-1.03l3.24-5.88A1 1 0 0 0 19.7 4H5.21l-.94-2zM17 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/></svg>
-        <span class="cart-count-liquid" id="cartCount">0</span>
+      <button class="icon-btn" id="cartBtn" aria-label="Cart">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.8l.1-.4L8.1 12h7.5c.8 0 1.4-.4 1.8-1l3.6-6.5-1.8-1-3.6 6.5H8.5L6.2 4.5H2v2h2.8l3.6 7.2-1.3 2.4c-.2.3-.2.7 0 1 .2.4.6.6 1 .6H19v-2H7.4c-.1 0-.2-.1-.2-.2z"/></svg>
+        <span class="cart-liquid-badge" id="cartCount">0</span>
       </button>
       <button class="icon-btn avatar-btn" id="authBtn" aria-label="Account">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10m0 2c-4.4 0-8 2.24-8 5v2h16v-2c0-2.76-3.6-5-8-5"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.5c-3.3 0-9.8 1.6-9.8 4.9v2.4h19.6v-2.4c0-3.3-6.5-4.9-9.8-4.9z"/></svg>
       </button>
-      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-  </div>
-
-  <!-- AI SEARCH PANEL -->
-  <div class="ai-search-panel" id="aiSearchPanel">
-    <div class="ai-search-inner">
-      <span class="ai-pulse-dot"></span>
-      <input type="text" id="aiSearchInput" placeholder="Ask the AI to find anything…">
-      <button class="close-x" id="closeSearch">✕</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
 
-<main id="home">
+<main>
 
-  <!-- HERO -->
+<!-- HERO -->
+<section class="page active" id="home">
   <section class="hero">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">◆ QUANTUM COMMERCE ENGINE ◆</div>
-      <h1 class="hero-title" id="heroTitle"><span id="typewriter"></span><span class="cursor-blink">_</span></h1>
-      <p class="hero-sub">AI Powered. Quantum Fast. <span class="gold">Delivered Across Bangladesh in a Blink.</span></p>
-      <div class="hero-cta">
-        <a href="#shop" class="btn-liquid btn-primary"><span>Explore Products</span></a>
-        <button class="btn-liquid btn-ghost" id="aiRecommendBtn"><span>AI Recommend Me</span></button>
-      </div>
-    </div>
-    <div class="hero-orb-wrap" id="orbWrap">
+    <canvas class="hero-grid" id="heroGrid"></canvas>
+    <div class="hero-orb-wrap" id="heroOrbWrap">
       <div class="hero-orb" id="heroOrb">
-        <div class="orb-ring ring1"></div>
-        <div class="orb-ring ring2"></div>
-        <div class="orb-ring ring3"></div>
         <div class="orb-core"></div>
+        <div class="orb-ring r1"></div>
+        <div class="orb-ring r2"></div>
+        <div class="orb-ring r3"></div>
       </div>
     </div>
-    <div class="scroll-hint"><span></span>Scroll to Enter</div>
-  </section>
 
-  <!-- SHOP -->
-  <section class="shop-section" id="shop">
-    <div class="section-head">
-      <h2 class="section-title">THE <span class="neon">COLLECTION</span></h2>
-      <p class="section-desc">Curated by algorithms. Approved by taste.</p>
+    <div class="hero-content">
+      <p class="eyebrow">BANGLADESH · QUANTUM RETAIL NETWORK</p>
+      <h1 class="hero-headline">
+        <span class="type-line" id="typeLine1"></span>
+        <span class="type-line" id="typeLine2"></span>
+      </h1>
+      <p class="hero-sub">AI Powered. Quantum Fast. <span class="sub-accent">Delivered before you finish thinking.</span></p>
+      <div class="hero-actions">
+        <button class="btn btn-liquid btn-primary" id="exploreBtn">
+          <span>Explore Products</span>
+        </button>
+        <button class="btn btn-liquid btn-ghost" id="aiRecommendBtn">
+          <span>AI Recommend Me</span>
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong id="statOrders">0</strong><span>Orders Delivered</span></div>
+        <div class="stat"><strong id="statCities">64</strong><span>Districts Covered</span></div>
+        <div class="stat"><strong>2.1s</strong><span>Avg. Response</span></div>
+      </div>
     </div>
 
-    <div class="shop-layout">
-      <aside class="shop-sidebar glass">
-        <h3>Filter Matrix</h3>
-        <div class="filter-group">
-          <label>Search</label>
-          <input type="text" id="shopSearch" placeholder="Search products…">
-        </div>
-        <div class="filter-group">
-          <label>Category</label>
-          <select id="categoryFilter">
-            <option value="all">All Categories</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Max Price: <span id="priceLabel">Any</span></label>
-          <input type="range" id="priceFilter" min="0" max="200000" step="500" value="200000">
-        </div>
-        <button class="btn-liquid btn-primary small" id="resetFilters"><span>Reset</span></button>
-      </aside>
-
-      <div class="product-grid" id="productGrid">
-        <!-- products injected by script.js from products.js -->
-      </div>
+    <div class="scroll-cue">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
     </div>
   </section>
+</section>
 
-  <!-- TRACKING -->
-  <section class="tracking-section" id="tracking">
-    <div class="section-head">
-      <h2 class="section-title">ORDER <span class="neon">TRACKING</span></h2>
-      <p class="section-desc">Real-time quantum shipment visibility.</p>
-    </div>
+<!-- SHOP -->
+<section class="page" id="shop">
+  <div class="shop-layout">
+    <aside class="filter-panel glass">
+      <h3 class="panel-title">Filters</h3>
 
-    <div class="tracking-panel glass">
-      <div class="holo-input-wrap">
-        <input type="text" id="trackingInput" placeholder="Enter Order ID · e.g. NXC0000001">
-        <button class="btn-liquid btn-primary" id="trackBtn"><span>Track</span></button>
-      </div>
-
-      <div class="track-path" id="trackPath">
-        <div class="track-step" data-step="pending">
-          <div class="track-node"></div>
-          <span>Pending</span>
-        </div>
-        <div class="track-line"></div>
-        <div class="track-step" data-step="processing">
-          <div class="track-node"></div>
-          <span>Processing</span>
-        </div>
-        <div class="track-line"></div>
-        <div class="track-step" data-step="shipped">
-          <div class="track-node"></div>
-          <span>Shipped</span>
-        </div>
-        <div class="track-line"></div>
-        <div class="track-step" data-step="delivered">
-          <div class="track-node"></div>
-          <span>Delivered</span>
+      <div class="filter-group">
+        <label class="filter-label">AI Search</label>
+        <div class="ai-search-bar">
+          <input type="text" id="productSearch" placeholder="Ask NEXA... e.g. 'cool gadgets under 5000'">
+          <span class="ai-orb-mini"></span>
         </div>
       </div>
-      <p class="track-status-text" id="trackStatusText"></p>
-    </div>
-  </section>
 
-  <!-- ABOUT -->
-  <section class="about-section" id="about">
-    <div class="section-head">
-      <h2 class="section-title">WHY <span class="neon">NEXCARTBD</span></h2>
+      <div class="filter-group">
+        <label class="filter-label">Category</label>
+        <select id="categoryFilter" class="glass-select">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Price Range</label>
+        <input type="range" id="priceFilter" min="0" max="200000" value="200000" class="neon-range">
+        <div class="price-value"><span>৳0</span> — <span id="priceMax">৳200000+</span></div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Sort By</label>
+        <select id="sortFilter" class="glass-select">
+          <option value="trending">AI Trending</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+    </aside>
+
+    <div class="product-area">
+      <div class="shop-header-row">
+        <h2 class="section-title">Shop the Future</h2>
+        <span class="result-count" id="resultCount">0 items</span>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-orb"></div>
+        <h3>The catalog is being synthesized</h3>
+        <p>New quantum inventory is loading into the network. Check back shortly.</p>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- TRACKING -->
+<section class="page" id="tracking">
+  <div class="tracking-wrap">
+    <h2 class="section-title center">Track Your Shipment</h2>
+    <p class="section-sub center">Real-time quantum-linked delivery telemetry</p>
+
+    <div class="holo-input-wrap glass">
+      <input type="text" id="trackingInput" placeholder="Enter Order ID  ·  e.g. NXC0000001">
+      <button class="btn btn-liquid btn-primary" id="trackBtn"><span>Track</span></button>
+    </div>
+
+    <div class="tracking-result" id="trackingResult" hidden>
+      <div class="order-id-display" id="orderIdDisplay"></div>
+      <div class="progress-path">
+        <div class="path-line"><div class="path-fill" id="pathFill"></div></div>
+        <div class="path-step" data-step="0">
+          <div class="step-node"><span class="node-icon">1</span></div>
+          <span class="step-label">Pending</span>
+        </div>
+        <div class="path-step" data-step="1">
+          <div class="step-node"><span class="node-icon">2</span></div>
+          <span class="step-label">Processing</span>
+        </div>
+        <div class="path-step" data-step="2">
+          <div class="step-node"><span class="node-icon">3</span></div>
+          <span class="step-label">Shipped</span>
+        </div>
+        <div class="path-step" data-step="3">
+          <div class="step-node"><span class="node-icon">4</span></div>
+          <span class="step-label">Delivered</span>
+        </div>
+      </div>
+      <p class="tracking-note" id="trackingNote"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="page" id="about">
+  <div class="about-wrap">
+    <h2 class="section-title center">Why NEXCARTBD</h2>
+    <p class="section-sub center">Bangladesh's first quantum-grade commerce network</p>
+
     <div class="about-grid">
-      <div class="info-card glass">
+      <div class="glass info-card">
         <div class="info-icon">⚡</div>
-        <h3>Quantum-Fast Delivery</h3>
-        <p>Predictive logistics routes your order before you finish checkout, cutting delivery windows across Bangladesh to hours, not days.</p>
+        <h3>Quantum Fast Delivery</h3>
+        <p>Predictive AI logistics route your order before you even confirm checkout — live across all 64 districts.</p>
       </div>
-      <div class="info-card glass">
+      <div class="glass info-card">
         <div class="info-icon">🛰️</div>
-        <h3>AI Curation Engine</h3>
-        <p>Every product surfaced to you is filtered by an AI trained on real buying behavior — no noise, only relevance.</p>
+        <h3>AI Personal Shopper</h3>
+        <p>NEXA, our on-site intelligence, learns your taste and curates products in real time, not after the fact.</p>
       </div>
-      <div class="info-card glass">
+      <div class="glass info-card">
         <div class="info-icon">🔒</div>
-        <h3>Secure by Design</h3>
-        <p>Encrypted checkout, verified sellers, and transparent tracking — built for trust at every step of the journey.</p>
+        <h3>Secured Transactions</h3>
+        <p>Encrypted checkout with Cash on Delivery or bKash / Nagad instant payment — your data never leaves the grid.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 </main>
 
-<footer class="site-footer">
-  <p>© 2060 NEXCARTBD — Built for Bangladesh, powered by the future.</p>
-</footer>
-
 <!-- CART SIDEBAR -->
-<div class="cart-overlay" id="cartOverlay"></div>
+<div class="overlay-scrim" id="cartScrim"></div>
 <aside class="cart-sidebar glass" id="cartSidebar">
   <div class="cart-header">
     <h3>Your Cart</h3>
-    <button class="close-x" id="closeCart">✕</button>
+    <button class="close-btn" id="closeCart">&times;</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
+  <div class="cart-empty" id="cartEmptyMsg">Your cart is a quiet void. Add something from the Shop.</div>
   <div class="cart-footer">
-    <div class="cart-total-row"><span>Total</span><span id="cartTotal">৳0</span></div>
-    <button class="btn-liquid btn-primary full" id="initiateOrderBtn"><span>Initiate Order</span></button>
+    <div class="cart-total-row"><span>Total</span><strong id="cartTotal">৳0</strong></div>
+    <button class="btn btn-liquid btn-primary btn-block" id="initiateOrderBtn"><span>Initiate Order</span></button>
   </div>
 </aside>
 
 <!-- ORDER FORM / QUANTUM CHECKOUT -->
 <div class="checkout-overlay" id="checkoutOverlay">
-  <div class="checkout-card glass">
-    <div class="checkout-border-spin"></div>
-    <button class="close-x checkout-close" id="closeCheckout">✕</button>
+  <div class="checkout-card">
+    <div class="checkout-border"></div>
+    <button class="close-btn checkout-close" id="closeCheckout">&times;</button>
+
     <h2 class="checkout-title">QUANTUM CHECKOUT</h2>
 
-    <div class="checkout-body" id="checkoutBody">
-      <div class="checkout-summary">
+    <div class="checkout-body">
+      <div class="order-summary">
         <h4>Order Summary</h4>
-        <div id="checkoutItems"></div>
-        <div class="checkout-total-row"><span>Total</span><span id="checkoutTotal">৳0</span></div>
+        <div class="summary-items" id="summaryItems"></div>
+        <div class="summary-total-row"><span>Total</span><strong id="summaryTotal">৳0</strong></div>
       </div>
 
-      <form class="checkout-form" id="checkoutForm">
-        <input type="text" id="ordName" placeholder="Full Name" required>
-        <input type="tel" id="ordMobile" placeholder="Mobile Number" required>
-        <input type="email" id="ordEmail" placeholder="Email Address">
-        <textarea id="ordAddress" placeholder="Full Address" required rows="2"></textarea>
-        <select id="ordDistrict" required>
-          <option value="">Select District</option>
-          <option>Dhaka</option><option>Chattogram</option><option>Khulna</option>
-          <option>Rajshahi</option><option>Sylhet</option><option>Barishal</option>
-          <option>Rangpur</option><option>Mymensingh</option>
-        </select>
-
-        <div class="payment-section">
-          <label class="pay-option">
-            <input type="radio" name="payment" value="cod" checked>
-            <span>Cash on Delivery</span>
-          </label>
-          <label class="pay-option">
-            <input type="radio" name="payment" value="online">
-            <span>Online Payment / bKash-Nagad</span>
-          </label>
+      <form class="order-form" id="orderForm">
+        <div class="form-field">
+          <label>Full Name</label>
+          <input type="text" id="custName" required placeholder="Your name">
+        </div>
+        <div class="form-field">
+          <label>Mobile Number</label>
+          <input type="tel" id="custMobile" required placeholder="01XXXXXXXXX" pattern="[0-9]{11}">
+        </div>
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" id="custEmail" required placeholder="you@example.com">
+        </div>
+        <div class="form-field">
+          <label>Full Address</label>
+          <textarea id="custAddress" required placeholder="House, Road, Area"></textarea>
+        </div>
+        <div class="form-field">
+          <label>District</label>
+          <select id="custDistrict" class="glass-select" required>
+            <option value="">Select district</option>
+            <option>Dhaka</option><option>Chattogram</option><option>Khulna</option>
+            <option>Rajshahi</option><option>Sylhet</option><option>Barishal</option>
+            <option>Rangpur</option><option>Mymensingh</option><option>Gazipur</option>
+            <option>Narayanganj</option><option>Cumilla</option><option>Cox's Bazar</option>
+          </select>
         </div>
 
-        <button type="submit" class="btn-order-now" id="orderNowBtn"><span>ORDER NOW</span></button>
+        <div class="form-field payment-field">
+          <label>Payment Method</label>
+          <div class="payment-options">
+            <label class="radio-card">
+              <input type="radio" name="payment" value="cod" checked>
+              <span class="radio-mark"></span>
+              <span>Cash on Delivery</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="payment" value="online">
+              <span class="radio-mark"></span>
+              <span>Online Payment / bKash-Nagad</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn order-now-btn" id="orderNowBtn">
+          <span>ORDER NOW</span>
+        </button>
       </form>
     </div>
 
-    <div class="checkout-success" id="checkoutSuccess">
-      <div class="success-ring"></div>
-      <h3>ORDER CONFIRMED</h3>
-      <p>Order ID</p>
-      <div class="order-id-display" id="orderIdDisplay">NXC0000001</div>
-      <button class="btn-liquid btn-primary" id="closeSuccessBtn"><span>Done</span></button>
+    <div class="order-success" id="orderSuccess" hidden>
+      <div class="success-orb"></div>
+      <h3>Order Confirmed</h3>
+      <p>Your order has entered the quantum fulfillment stream.</p>
+      <div class="order-id-tag" id="finalOrderId">Order ID: NXC0000001</div>
+      <button class="btn btn-liquid btn-primary" id="successCloseBtn"><span>Continue Shopping</span></button>
     </div>
   </div>
 </div>
 
-<!-- AUTH MODAL -->
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-card glass">
-    <button class="close-x" id="closeAuth">✕</button>
-    <div class="auth-tabs">
-      <button class="auth-tab active" data-tab="login">Login</button>
-      <button class="auth-tab" data-tab="register">Register</button>
+<!-- AUTH POPUP -->
+<div class="overlay-scrim" id="authScrim"></div>
+<div class="auth-popup glass" id="authPopup">
+  <button class="close-btn" id="closeAuth">&times;</button>
+  <div class="auth-tabs">
+    <button class="auth-tab active" data-tab="login">Login</button>
+    <button class="auth-tab" data-tab="register">Register</button>
+  </div>
+
+  <form class="auth-form active" id="loginForm">
+    <div class="form-field">
+      <label>Mobile or Email</label>
+      <input type="text" id="loginId" required placeholder="Mobile or email">
     </div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" required placeholder="••••••••">
+    </div>
+    <button type="submit" class="btn btn-liquid btn-primary btn-block"><span>Login</span></button>
+    <p class="auth-msg" id="loginMsg"></p>
+  </form>
 
-    <form class="auth-form active" id="loginForm">
-      <input type="tel" placeholder="Mobile Number" id="loginMobile" required>
-      <input type="password" placeholder="Password" id="loginPassword" required>
-      <button type="submit" class="btn-liquid btn-primary full"><span>Login</span></button>
-    </form>
-
-    <form class="auth-form" id="registerForm">
-      <input type="text" placeholder="Full Name" id="regName" required>
-      <input type="tel" placeholder="Mobile Number" id="regMobile" required>
-      <input type="email" placeholder="Email Address" id="regEmail">
-      <input type="password" placeholder="Password" id="regPassword" required>
-      <input type="text" placeholder="Address" id="regAddress" required>
-      <select id="regDistrict" required>
-        <option value="">Select District</option>
+  <form class="auth-form" id="registerForm">
+    <div class="form-field">
+      <label>Full Name</label>
+      <input type="text" id="regName" required placeholder="Your name">
+    </div>
+    <div class="form-field">
+      <label>Mobile</label>
+      <input type="tel" id="regMobile" required placeholder="01XXXXXXXXX">
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input type="email" id="regEmail" required placeholder="you@example.com">
+    </div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="regPassword" required placeholder="••••••••">
+    </div>
+    <div class="form-field">
+      <label>Address</label>
+      <textarea id="regAddress" required placeholder="Your address"></textarea>
+    </div>
+    <div class="form-field">
+      <label>District</label>
+      <select id="regDistrict" class="glass-select" required>
+        <option value="">Select district</option>
         <option>Dhaka</option><option>Chattogram</option><option>Khulna</option>
         <option>Rajshahi</option><option>Sylhet</option><option>Barishal</option>
-        <option>Rangpur</option><option>Mymensingh</option>
+        <option>Rangpur</option><option>Mymensingh</option><option>Gazipur</option>
       </select>
-      <button type="submit" class="btn-liquid btn-primary full"><span>Create Account</span></button>
-    </form>
-  </div>
+    </div>
+    <button type="submit" class="btn btn-liquid btn-primary btn-block"><span>Create Account</span></button>
+    <p class="auth-msg" id="registerMsg"></p>
+  </form>
 </div>
 
-<div class="toast-stack" id="toastStack"></div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script src="config.js"></script>
 <script src="products.js"></script>
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
