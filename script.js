@@ -228,7 +228,7 @@
   /* ============================================================
      PRODUCTS — render from products.js, filters, 3D tilt
      ============================================================ */
- function populateCategories() {
+  function populateCategories() {
     try {
       const sel = $("#categoryFilter");
       if (!sel || typeof products === "undefined") return;
@@ -410,7 +410,7 @@
   /* ============================================================
      AUTH — register / login via API
      ============================================================ */
-try {
+  try {
     on($("#authBtn"), "click", () => $("#authOverlay")?.classList.add("open"));
     on($("#closeAuth"), "click", () => $("#authOverlay")?.classList.remove("open"));
     on($("#authOverlay"), "click", (e) => { if (e.target.id === "authOverlay") $("#authOverlay").classList.remove("open"); });
@@ -487,7 +487,6 @@ try {
     }
   }
   try { getProducts(); } catch (e) { console.warn("getProducts error:", e); }
-
   /* ============================================================
      QUANTUM CHECKOUT — order form
      ============================================================ */
@@ -526,16 +525,40 @@ try {
   function renderCheckoutSummary() {
     const itemsEl = $("#checkoutItems");
     if (itemsEl) {
-      itemsEl.innerHTML = state.cart.map(i => `
-        <div class="checkout-summary-item">
-          <span>${i.name} × ${i.qty}</span>
-          <span>৳${(i.price * i.qty).toLocaleString()}</span>
-        </div>
-      `).join("");
+      if (!state.cart.length) {
+        itemsEl.innerHTML = `<div class="checkout-summary-item" style="justify-content:center;color:var(--text-dim);">Cart is empty</div>`;
+      } else {
+        itemsEl.innerHTML = state.cart.map(i => `
+          <div class="checkout-summary-item">
+            <div class="checkout-summary-item-left">
+              <span class="checkout-summary-name">${i.name}</span>
+              <div class="checkout-qty-controls">
+                <button class="qty-btn" data-cact="dec" data-cid="${i.id}">−</button>
+                <span>${i.qty}</span>
+                <button class="qty-btn" data-cact="inc" data-cid="${i.id}">+</button>
+              </div>
+            </div>
+            <span>৳${(i.price * i.qty).toLocaleString()}</span>
+          </div>
+        `).join("");
+      }
     }
     const totalEl = $("#checkoutTotal");
     if (totalEl) totalEl.textContent = "৳" + cartTotal().toLocaleString();
   }
+
+  try {
+    on($("#checkoutItems"), "click", (e) => {
+      const t = e.target.closest("[data-cact]");
+      if (!t) return;
+      const id = t.dataset.cid;
+      const pid = isNaN(id) ? id : Number(id);
+      if (t.dataset.cact === "inc") updateQty(pid, 1);
+      if (t.dataset.cact === "dec") updateQty(pid, -1);
+      renderCheckoutSummary();
+      if (!state.cart.length) closeCheckout();
+    });
+  } catch (e) { console.warn("Checkout qty controls error:", e); }
 
   async function submitOrder(e) {
     const payload = {
@@ -598,7 +621,7 @@ try {
   /* ============================================================
      SCROLL REVEAL
      ============================================================ */
- try {
+  try {
     const revealTargets = document.querySelectorAll(".info-card, .tracking-panel, .shop-layout");
     revealTargets.forEach(el => el.classList.add("reveal"));
     const io = new IntersectionObserver((entries) => {
