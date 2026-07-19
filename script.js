@@ -1,626 +1,399 @@
-/* ============================================================
-   NEXCARTBD — 2060 Storefront Engine
-   Vanilla JS. Cart + Auth + Orders + Particle/Cursor FX.
-   ============================================================ */
+// ============================================================
+// NEXCARTBD — 2060 Storefront Engine
+// Vanilla JS only. Depends on config.js (API_URL) and
+// products.js (const products = [...]).
+// ============================================================
 
-(() => {
+(function () {
   "use strict";
 
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => document.querySelectorAll(sel);
-  const on = (el, evt, fn) => { if (el) el.addEventListener(evt, fn); };
-
-  /* ---------- STATE ---------- */
+  /* ------------------------------------------------------------
+     STATE
+  ------------------------------------------------------------ */
   const state = {
     cart: JSON.parse(localStorage.getItem("nexcart_cart") || "[]"),
     user: JSON.parse(localStorage.getItem("nexcart_user") || "null"),
     token: localStorage.getItem("nexcart_token") || null,
-    filtered: []
+    filters: { search: "", category: "all", maxPrice: 200000, sort: "trending" },
   };
 
-  /* ============================================================
-     BOOT SCREEN (with hard failsafe)
-     ============================================================ */
-  function hideBootScreen() {
-    const boot = $("#bootScreen");
-    if (boot) boot.classList.add("done");
+  const els = {};
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  document.addEventListener("DOMContentLoaded", init);
+
+  function init() {
+    cacheEls();
+    initLoader();
+    initCursor();
+    initParticleField();
+    initHeroGrid();
+    initHeroOrbFollow();
+    initTypewriter();
+    initHeaderScroll();
+    initNav();
+    initHamburger();
+    initShop();
+    initCartUI();
+    initCheckout();
+    initTracking();
+    initAuth();
+    initRippleButtons();
+    initTiltCards();
+    renderCartBadge();
+    animateStat($("#statOrders"), 128430, 2000);
   }
-  try {
+
+  function cacheEls() {
+    els.header = $("#siteHeader");
+  }
+
+  /* ------------------------------------------------------------
+     LOADER
+  ------------------------------------------------------------ */
+  function initLoader() {
+    const loader = $("#quantumLoader");
     window.addEventListener("load", () => {
-      const fill = $("#bootFill");
-      let p = 0;
-      const iv = setInterval(() => {
-        p += Math.random() * 25;
-        if (fill) fill.style.width = Math.min(p, 100) + "%";
-        if (p >= 100) {
-          clearInterval(iv);
-          setTimeout(hideBootScreen, 300);
-        }
-      }, 120);
+      setTimeout(() => loader.classList.add("hidden"), 500);
     });
-  } catch (e) { console.warn("Boot animation error:", e); }
-  // No matter what happens anywhere else in this file, force-hide after 3s
-  setTimeout(hideBootScreen, 3000);
+    // Fallback in case load event already fired
+    setTimeout(() => loader.classList.add("hidden"), 2500);
+  }
 
-  /* ============================================================
+  /* ------------------------------------------------------------
      CUSTOM CURSOR + LIGHT TRAIL
-     ============================================================ */
-  try {
-    const cursorCore = $("#cursorCore");
-    const cursorRing = $("#cursorRing");
-    if (cursorCore && cursorRing && window.matchMedia("(hover: hover)").matches) {
-      let mx = 0, my = 0, rx = 0, ry = 0;
-      window.addEventListener("mousemove", (e) => {
-        mx = e.clientX; my = e.clientY;
-        cursorCore.style.left = mx + "px";
-        cursorCore.style.top = my + "px";
-        spawnTrail(mx, my);
-      });
-      (function loop() {
-        rx += (mx - rx) * 0.18;
-        ry += (my - ry) * 0.18;
-        cursorRing.style.left = rx + "px";
-        cursorRing.style.top = ry + "px";
-        requestAnimationFrame(loop);
-      })();
+  ------------------------------------------------------------ */
+  function initCursor() {
+    if (window.matchMedia("(hover: none)").matches) return;
+    const core = $("#cursorCore");
+    const canvas = $("#cursorTrail");
+    const ctx = canvas.getContext("2d");
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+    window.addEventListener("resize", () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
 
-      document.addEventListener("mouseover", (e) => {
-        if (e.target.closest("a,button,input,select,.product-card,.icon-btn")) {
-          cursorRing.classList.add("hovering");
-        }
-      });
-      document.addEventListener("mouseout", (e) => {
-        if (e.target.closest("a,button,input,select,.product-card,.icon-btn")) {
-          cursorRing.classList.remove("hovering");
-        }
-      });
+    const points = [];
+    let mx = w / 2, my = h / 2;
 
-      function spawnTrail(x, y) {
-        if (Math.random() > 0.6) return;
-        const dot = document.createElement("div");
-        dot.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:4px;height:4px;
-          background:#00FF9D;border-radius:50%;pointer-events:none;z-index:9998;
-          transform:translate(-50%,-50%);box-shadow:0 0 8px #00FF9D;
-          transition:opacity .6s ease, transform .6s ease;`;
-        document.body.appendChild(dot);
-        requestAnimationFrame(() => {
-          dot.style.opacity = "0";
-          dot.style.transform = "translate(-50%,-50%) scale(0.2)";
-        });
-        setTimeout(() => dot.remove(), 600);
+    document.addEventListener("mousemove", (e) => {
+      mx = e.clientX; my = e.clientY;
+      core.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+      points.push({ x: mx, y: my, life: 1 });
+      if (points.length > 24) points.shift();
+
+      const target = e.target.closest("a, button, .product-card, input, select, textarea, .radio-card");
+      core.classList.toggle("hovering", !!target);
+    });
+
+    function loop() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        p.life -= 0.045;
+        if (p.life <= 0) continue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5 * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,255,157,${p.life * 0.5})`;
+        ctx.fill();
       }
+      requestAnimationFrame(loop);
     }
-  } catch (e) { console.warn("Cursor FX error:", e); }
+    loop();
+  }
 
-  /* ============================================================
+  /* ------------------------------------------------------------
      PARTICLE UNIVERSE BACKGROUND
-     ============================================================ */
-  try {
+  ------------------------------------------------------------ */
+  function initParticleField() {
     const canvas = $("#particleField");
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      let particles = [];
-      const PARTICLE_COUNT = window.innerWidth < 768 ? 45 : 100;
+    const ctx = canvas.getContext("2d");
+    let w, h, particles;
 
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      function initParticles() {
-        particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          z: Math.random() * 1.5 + 0.3,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          r: Math.random() * 1.6 + 0.4
-        }));
-      }
-      function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(0,255,157,0.5)";
-        particles.forEach((p) => {
-          p.x += p.vx; p.y += p.vy;
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * p.z, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        for (let i = 0; i < particles.length; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 110) {
-              ctx.strokeStyle = `rgba(0,255,157,${0.08 * (1 - dist / 110)})`;
-              ctx.lineWidth = 0.5;
-              ctx.beginPath();
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.stroke();
-            }
-          }
-        }
-        requestAnimationFrame(drawParticles);
-      }
-      resizeCanvas(); initParticles(); drawParticles();
-      window.addEventListener("resize", () => { resizeCanvas(); initParticles(); });
+    function size() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
     }
-  } catch (e) { console.warn("Particle field error:", e); }
+    size();
+    window.addEventListener("resize", size);
 
-  /* ============================================================
-     HEADER — scroll state + mobile nav + AI search
-     ============================================================ */
-  try {
-    const header = $("#siteHeader");
+    const count = Math.min(90, Math.floor((window.innerWidth * window.innerHeight) / 14000));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.6 + 0.4,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      glow: Math.random() > 0.85,
+    }));
+
+    function loop() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach((p) => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.glow ? "rgba(255,215,0,0.5)" : "rgba(0,255,157,0.35)";
+        ctx.fill();
+      });
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* ------------------------------------------------------------
+     HERO GRID (subtle animated perspective grid)
+  ------------------------------------------------------------ */
+  function initHeroGrid() {
+    const canvas = $("#heroGrid");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let w, h, t = 0;
+    function size() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      w = canvas.width = rect.width;
+      h = canvas.height = rect.height;
+    }
+    size();
+    window.addEventListener("resize", size);
+
+    function loop() {
+      t += 0.4;
+      ctx.clearRect(0, 0, w, h);
+      const spacing = 46;
+      ctx.strokeStyle = "rgba(0,255,157,0.06)";
+      ctx.lineWidth = 1;
+      for (let x = -spacing; x < w + spacing; x += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(x + ((t * 0.3) % spacing), 0);
+        ctx.lineTo(x + ((t * 0.3) % spacing), h);
+        ctx.stroke();
+      }
+      for (let y = -spacing; y < h + spacing; y += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y + ((t * 0.15) % spacing));
+        ctx.lineTo(w, y + ((t * 0.15) % spacing));
+        ctx.stroke();
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* ------------------------------------------------------------
+     HERO ORB — follows mouse with light trail (CSS driven)
+  ------------------------------------------------------------ */
+ function initHeroOrbFollow() {
+    const hero = $(".hero");
+    const wrap = $("#heroOrbWrap");
+    if (!hero || !wrap) return;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    hero.addEventListener("mousemove", (e) => {
+      const rect = hero.getBoundingClientRect();
+      tx = e.clientX - rect.left - rect.width / 2;
+      ty = e.clientY - rect.top - rect.height / 2;
+    });
+    hero.addEventListener("mouseleave", () => { tx = 0; ty = 0; });
+
+    function loop() {
+      cx += (tx * 0.15 - cx * 0.15);
+      cy += (ty * 0.15 - cy * 0.15);
+      wrap.style.transform = `translate(${cx * 0.25}px, ${cy * 0.25}px)`;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* ------------------------------------------------------------
+     TYPEWRITER + HOLOGRAM HEADLINE
+  ------------------------------------------------------------ */
+  function initTypewriter() {
+    const line1 = $("#typeLine1");
+    const line2 = $("#typeLine2");
+    if (!line1 || !line2) return;
+    const text1 = "WELCOME TO";
+    const text2 = "2060 SHOPPING";
+
+    typeInto(line1, text1, 60, () => {
+      typeInto(line2, text2, 60, () => {
+        const caret = document.createElement("span");
+        caret.className = "cursor-caret";
+        line2.appendChild(caret);
+      });
+    });
+  }
+
+  function typeInto(el, text, speed, done) {
+    let i = 0;
+    el.textContent = "";
+    (function step() {
+      if (i <= text.length) {
+        el.textContent = text.slice(0, i);
+        i++;
+        setTimeout(step, speed);
+      } else if (done) done();
+    })();
+  }
+
+  /* ------------------------------------------------------------
+     HEADER SCROLL EFFECT
+  ------------------------------------------------------------ */
+  function initHeaderScroll() {
     window.addEventListener("scroll", () => {
-      if (header) header.classList.toggle("scrolled", window.scrollY > 30);
+      els.header.classList.toggle("scrolled", window.scrollY > 20);
     });
+  }
 
-    on($("#hamburger"), "click", () => $("#mainNav")?.classList.toggle("open"));
-
-    $$(".nav-link").forEach(link => on(link, "click", () => {
-      $$(".nav-link").forEach(l => l.classList.remove("active"));
-      link.classList.add("active");
-      $("#mainNav")?.classList.remove("open");
-    }));
-
-    on($("#aiSearchBtn"), "click", () => {
-      $("#aiSearchPanel")?.classList.toggle("open");
-      $("#aiSearchInput")?.focus();
+  /* ------------------------------------------------------------
+     NAVIGATION (SPA-style page switch)
+  ------------------------------------------------------------ */
+  function initNav() {
+    $$(".nav-link").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        goToPage(link.dataset.page);
+        $("#mainNav").classList.remove("open");
+      });
     });
-    on($("#closeSearch"), "click", () => $("#aiSearchPanel")?.classList.remove("open"));
-    on($("#aiSearchInput"), "input", (e) => {
-      const shopSearch = $("#shopSearch");
-      if (shopSearch) shopSearch.value = e.target.value;
+    $("#exploreBtn").addEventListener("click", () => goToPage("shop"));
+    $("#aiRecommendBtn").addEventListener("click", () => {
+      goToPage("shop");
+      showToast("NEXA is curating picks based on trending demand ✦");
+      state.filters.sort = "trending";
+      $("#sortFilter").value = "trending";
       renderProducts();
-      $("#shop")?.scrollIntoView({ behavior: "smooth" });
     });
-  } catch (e) { console.warn("Header error:", e); }
+  }
 
-  /* ============================================================
-     HERO — typewriter + 3D orb tracking mouse
-     ============================================================ */
-  try {
-    const phrase = "WELCOME TO 2060 SHOPPING";
-    let ti = 0;
-    function typewrite() {
-      const tw = $("#typewriter");
-      if (!tw) return;
-      if (ti <= phrase.length) {
-        tw.textContent = phrase.slice(0, ti);
-        ti++;
-        setTimeout(typewrite, 55);
-      }
-    }
-    typewrite();
+  function goToPage(name) {
+    $$(".page").forEach((p) => p.classList.remove("active"));
+    const target = document.getElementById(name);
+    if (target) target.classList.add("active");
+    $$(".nav-link").forEach((l) => l.classList.toggle("active", l.dataset.page === name));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
-    const orb = $("#heroOrb");
-    if (orb) {
-      window.addEventListener("mousemove", (e) => {
-        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
-        const rx = ((e.clientY - cy) / cy) * -10;
-        const ry = ((e.clientX - cx) / cx) * 10;
-        orb.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-      });
-    }
+  function initHamburger() {
+    $("#hamburgerBtn").addEventListener("click", () => {
+      $("#mainNav").classList.toggle("open");
+    });
+  }
 
-    on($("#aiRecommendBtn"), "click", () => {
-      if (typeof products === "undefined" || !products.length) {
-        toast("AI is still learning the catalog — check back soon.", "error");
-        return;
-      }
-      const pick = products[Math.floor(Math.random() * products.length)];
-      toast(`AI recommends: ${pick.name}`);
-      $("#shop")?.scrollIntoView({ behavior: "smooth" });
+  /* ------------------------------------------------------------
+     SHOP — dynamic product rendering from products.js
+  ------------------------------------------------------------ */
+  function initShop() {
+    populateCategories();
+    renderProducts();
+
+    $("#productSearch").addEventListener("input", (e) => {
+      state.filters.search = e.target.value.toLowerCase();
+      renderProducts();
+    });
+    $("#categoryFilter").addEventListener("change", (e) => {
+      state.filters.category = e.target.value;
+      renderProducts();
+    });
+    $("#priceFilter").addEventListener("input", (e) => {
+      state.filters.maxPrice = Number(e.target.value);
+      $("#priceMax").textContent = "৳" + Number(e.target.value).toLocaleString() + (Number(e.target.value) >= 200000 ? "+" : "");
+      renderProducts();
+    });
+    $("#sortFilter").addEventListener("change", (e) => {
+      state.filters.sort = e.target.value;
+      renderProducts();
     });
 
-    $$(".btn-primary").forEach(btn => on(btn, "mousemove", (e) => {
-      const r = btn.getBoundingClientRect();
-      btn.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      btn.style.setProperty("--my", `${e.clientY - r.top}px`);
-    }));
-  } catch (e) { console.warn("Hero error:", e); }
+    $("#aiSearchBtn").addEventListener("click", () => {
+      goToPage("shop");
+      $("#productSearch").focus();
+    });
+  }
 
-  /* ============================================================
-     PRODUCTS — render from products.js, filters, 3D tilt
-     ============================================================ */
   function populateCategories() {
-    try {
-      const sel = $("#categoryFilter");
-      if (!sel || typeof products === "undefined") return;
-      const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
-      cats.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c; opt.textContent = c;
-        sel.appendChild(opt);
-      });
-    } catch (e) { console.warn("populateCategories error:", e); }
+    const sel = $("#categoryFilter");
+    const cats = Array.from(new Set((window.products || []).map((p) => p.category).filter(Boolean)));
+    cats.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  function getFilteredProducts() {
+    let list = (window.products || []).slice();
+    const f = state.filters;
+
+    if (f.search) {
+      list = list.filter((p) => (p.name || "").toLowerCase().includes(f.search) || (p.category || "").toLowerCase().includes(f.search));
+    }
+    if (f.category !== "all") {
+      list = list.filter((p) => p.category === f.category);
+    }
+    list = list.filter((p) => (p.price || 0) <= f.maxPrice);
+
+    switch (f.sort) {
+      case "price-asc": list.sort((a, b) => (a.price||0) - (b.price||0)); break;
+      case "price-desc": list.sort((a, b) => (b.price||0) - (a.price||0)); break;
+      case "newest": list.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0)); break;
+      default: list.sort((a, b) => (b.trending === true) - (a.trending === true));
+    }
+    return list;
   }
 
   function renderProducts() {
-    try {
-      const grid = $("#productGrid");
-      if (!grid) return;
-      const search = ($("#shopSearch")?.value || "").toLowerCase();
-      const category = $("#categoryFilter")?.value || "all";
-      const maxPrice = Number($("#priceFilter")?.value || 200000);
-      const list = (typeof products !== "undefined" ? products : []).filter(p => {
-        const matchSearch = !search || p.name?.toLowerCase().includes(search);
-        const matchCat = category === "all" || p.category === category;
-        const matchPrice = !p.price || p.price <= maxPrice;
-        return matchSearch && matchCat && matchPrice;
-      });
+    const grid = $("#productGrid");
+    const empty = $("#emptyState");
+    const list = getFilteredProducts();
 
-      grid.innerHTML = "";
-      if (!list.length) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            <span class="ai-pulse-dot" style="display:inline-block;"></span>
-            <p>${(typeof products !== "undefined" && products.length) ? "No products match your filters." : "AI is scanning the catalog… products will materialize here once added."}</p>
-          </div>`;
-        return;
-      }
+    grid.innerHTML = "";
+    $("#resultCount").textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
 
-      list.forEach((p, i) => {
-        const card = document.createElement("div");
-        card.className = "product-card glass";
-        card.style.animationDelay = `${i * 0.05}s`;
-        card.innerHTML = `
-          ${p.trending ? '<span class="trending-badge">AI TRENDING</span>' : ""}
-          <div class="product-img"><img src="${p.image || ''}" alt="${p.name || 'Product'}" loading="lazy" onerror="this.style.opacity=0"></div>
-          <h4>${p.name || "Unnamed Product"}</h4>
-          <div class="product-price">৳${(p.price || 0).toLocaleString()}</div>
-          <div class="product-actions">
-            <button class="btn-liquid btn-ghost" data-action="add" data-id="${p.id}">Add to Cart</button>
-            <button class="btn-liquid btn-primary" data-action="buy" data-id="${p.id}">Instant Buy</button>
-          </div>
-        `;
-        grid.appendChild(card);
-        apply3DTilt(card);
-      });
-    } catch (e) { console.warn("renderProducts error:", e); }
-  }
-
-  function apply3DTilt(card) {
-    on(card, "mousemove", (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateY(-4px)`;
-    });
-    on(card, "mouseleave", () => { card.style.transform = "rotateY(0) rotateX(0) translateY(0)"; });
-  }
-
-  try {
-    on($("#productGrid"), "click", (e) => {
-      const btn = e.target.closest("button[data-action]");
-      if (!btn || typeof products === "undefined") return;
-      const product = products.find(p => String(p.id) === btn.dataset.id);
-      if (!product) return;
-      if (btn.dataset.action === "add") addToCart(product);
-      else { addToCart(product); showCheckout(); }
-    });
-
-    ["shopSearch", "categoryFilter"].forEach(id => on($("#" + id), "input", renderProducts));
-    on($("#priceFilter"), "input", (e) => {
-      const lbl = $("#priceLabel");
-      if (lbl) lbl.textContent = "৳" + Number(e.target.value).toLocaleString();
-      renderProducts();
-    });
-    on($("#resetFilters"), "click", () => {
-      if ($("#shopSearch")) $("#shopSearch").value = "";
-      if ($("#categoryFilter")) $("#categoryFilter").value = "all";
-      if ($("#priceFilter")) $("#priceFilter").value = 200000;
-      if ($("#priceLabel")) $("#priceLabel").textContent = "Any";
-      renderProducts();
-    });
-
-    populateCategories();
-    renderProducts();
-  } catch (e) { console.warn("Shop init error:", e); }
-
-  /* ============================================================
-     CART SYSTEM (localStorage)
-     ============================================================ */
-  function saveCart() {
-    localStorage.setItem("nexcart_cart", JSON.stringify(state.cart));
-    renderCart();
-  }
-  function addToCart(product) {
-    const existing = state.cart.find(i => i.id === product.id);
-    if (existing) existing.qty += 1;
-    else state.cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: 1 });
-    saveCart();
-    toast(`${product.name} added to cart`);
-  }
-  function updateQty(id, delta) {
-    const item = state.cart.find(i => i.id === id);
-    if (!item) return;
-    item.qty += delta;
-    if (item.qty <= 0) removeFromCart(id);
-    else saveCart();
-  }
-  function removeFromCart(id) {
-    const el = document.querySelector(`.cart-item[data-id="${id}"]`);
-    if (el) {
-      el.classList.add("removing");
-      setTimeout(() => { state.cart = state.cart.filter(i => i.id !== id); saveCart(); }, 380);
-    } else {
-      state.cart = state.cart.filter(i => i.id !== id);
-      saveCart();
+    if (!list.length) {
+      empty.classList.add("show");
+      return;
     }
-  }
-  function cartTotal() { return state.cart.reduce((sum, i) => sum + i.price * i.qty, 0); }
+    empty.classList.remove("show");
 
-  function renderCart() {
-    try {
-      const wrap = $("#cartItems");
-      const countEl = $("#cartCount");
-      const totalEl = $("#cartTotal");
-      if (countEl) countEl.textContent = state.cart.reduce((s, i) => s + i.qty, 0);
-      if (totalEl) totalEl.textContent = "৳" + cartTotal().toLocaleString();
-      if (!wrap) return;
-
-      if (!state.cart.length) {
-        wrap.innerHTML = `<div class="cart-empty">Your cart is a quantum vacuum. Add something!</div>`;
-        return;
-      }
-      wrap.innerHTML = state.cart.map(i => `
-        <div class="cart-item" data-id="${i.id}">
-          <img src="${i.image || ''}" alt="${i.name}" onerror="this.style.opacity=0">
-          <div class="cart-item-info">
-            <h5>${i.name}</h5>
-            <div>৳${i.price.toLocaleString()}</div>
-            <div class="cart-item-controls">
-              <button class="qty-btn" data-act="dec" data-id="${i.id}">−</button>
-              <span>${i.qty}</span>
-              <button class="qty-btn" data-act="inc" data-id="${i.id}">+</button>
-              <span class="remove-item" data-act="rm" data-id="${i.id}">Remove</span>
-            </div>
-          </div>
+    list.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.style.animationDelay = `${Math.min(i, 10) * 0.05}s`;
+      card.innerHTML = `
+        ${p.trending ? '<span class="card-badge">AI TRENDING</span>' : ""}
+        <div class="product-thumb">${p.image ? `<img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name || "")}" loading="lazy">` : "🛰️"}</div>
+        <div class="product-name">${escapeHtml(p.name || "Unnamed Product")}</div>
+        <div class="product-cat">${escapeHtml(p.category || "")}</div>
+        <div class="product-price-row">
+          <span class="product-price">৳${Number(p.price || 0).toLocaleString()}</span>
         </div>
-      `).join("");
-    } catch (e) { console.warn("renderCart error:", e); }
-  }
-
-  try {
-    on($("#cartItems"), "click", (e) => {
-      const t = e.target.closest("[data-act]");
-      if (!t) return;
-      const id = t.dataset.id;
-      const pid = isNaN(id) ? id : Number(id);
-      if (t.dataset.act === "inc") updateQty(pid, 1);
-      if (t.dataset.act === "dec") updateQty(pid, -1);
-      if (t.dataset.act === "rm") removeFromCart(pid);
+        <div class="card-actions">
+          <button class="btn btn-liquid btn-ghost add-to-cart-btn" data-id="${escapeAttr(p.id)}"><span>Add to Cart</span></button>
+          <button class="btn btn-liquid btn-primary instant-buy-btn" data-id="${escapeAttr(p.id)}"><span>Instant Buy</span></button>
+        </div>
+      `;
+      grid.appendChild(card);
     });
 
-    on($("#cartBtn"), "click", openCart);
-    on($("#closeCart"), "click", closeCart);
-    on($("#cartOverlay"), "click", closeCart);
-    function openCart() { $("#cartSidebar")?.classList.add("open"); $("#cartOverlay")?.classList.add("open"); }
-    function closeCart() { $("#cartSidebar")?.classList.remove("open"); $("#cartOverlay")?.classList.remove("open"); }
-
-    renderCart();
-  } catch (e) { console.warn("Cart init error:", e); }
-
-  /* ============================================================
-     AUTH — register / login via API
-     ============================================================ */
-  try {
-    on($("#authBtn"), "click", () => $("#authOverlay")?.classList.add("open"));
-    on($("#closeAuth"), "click", () => $("#authOverlay")?.classList.remove("open"));
-    on($("#authOverlay"), "click", (e) => { if (e.target.id === "authOverlay") $("#authOverlay").classList.remove("open"); });
-
-    $$(".auth-tab").forEach(tab => on(tab, "click", () => {
-      $$(".auth-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      $$(".auth-form").forEach(f => f.classList.remove("active"));
-      $(`#${tab.dataset.tab}Form`)?.classList.add("active");
+    $$(".add-to-cart-btn").forEach((btn) => btn.addEventListener("click", (e) => {
+      addToCart(btn.dataset.id);
+      spawnRipple(e, btn);
     }));
-  } catch (e) { console.warn("Auth tabs error:", e); }
+    $$(".instant-buy-btn").forEach((btn) => btn.addEventListener("click", (e) => {
+      addToCart(btn.dataset.id, true);
+      spawnRipple(e, btn);
+      showOrderForm();
+    }));
 
-  async function apiCall(url, payload) {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(state.token ? { Authorization: `Bearer ${state.token}` } : {})
-      },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || "Request failed");
-    return data;
+    initTiltCards();
   }
 
-  try {
-    on($("#registerForm"), "submit", async (e) => {
-      e.preventDefault();
-      const payload = {
-        name: $("#regName")?.value, mobile: $("#regMobile")?.value, email: $("#regEmail")?.value,
-        password: $("#regPassword")?.value, address: $("#regAddress")?.value, district: $("#regDistrict")?.value
-      };
-      try {
-        const data = await apiCall(API_ACTIONS.REGISTER, payload);
-        handleAuthSuccess(data, payload.name);
-      } catch (err) { toast(err.message || "Registration failed", "error"); }
-    });
-
-    on($("#loginForm"), "submit", async (e) => {
-      e.preventDefault();
-      const payload = { mobile: $("#loginMobile")?.value, password: $("#loginPassword")?.value };
-      try {
-        const data = await apiCall(API_ACTIONS.LOGIN, payload);
-        handleAuthSuccess(data, data.name || "User");
-      } catch (err) { toast(err.message || "Login failed", "error"); }
-    });
-  } catch (e) { console.warn("Auth forms error:", e); }
-
-  function handleAuthSuccess(data, name) {
-    state.user = { name, mobile: data.mobile || "" };
-    state.token = data.token || null;
-    localStorage.setItem("nexcart_user", JSON.stringify(state.user));
-    if (state.token) localStorage.setItem("nexcart_token", state.token);
-    $("#authOverlay")?.classList.remove("open");
-    toast(`Welcome, ${name}`);
-  }
-
-  /* ============================================================
-     PRODUCTS FROM API (optional live sync)
-     ============================================================ */
-  async function getProducts() {
-    try {
-      const res = await fetch(API_ACTIONS.GET_PRODUCTS);
-      const data = await res.json();
-      if (Array.isArray(data) && data.length && typeof products !== "undefined") {
-        products.length = 0;
-        products.push(...data);
-        populateCategories();
-        renderProducts();
-      }
-    } catch (err) {
-      // No live backend yet — silently keep local products.js
-    }
-  }
-  try { getProducts(); } catch (e) { console.warn("getProducts error:", e); }
-
-  /* ============================================================
-     QUANTUM CHECKOUT — order form
-     ============================================================ */
-  function showCheckout() {
-    if (!state.cart.length) { toast("Your cart is empty", "error"); return; }
-    $("#cartSidebar")?.classList.remove("open");
-    $("#cartOverlay")?.classList.remove("open");
-    renderCheckoutSummary();
-    $("#checkoutBody")?.classList.remove("hidden");
-    $("#checkoutSuccess")?.classList.remove("show");
-    $("#checkoutOverlay")?.classList.add("open");
-  }
-  function closeCheckout() { $("#checkoutOverlay")?.classList.remove("open"); }
-
-  try {
-    on($("#initiateOrderBtn"), "click", showCheckout);
-    on($("#closeCheckout"), "click", closeCheckout);
-    on($("#checkoutOverlay"), "click", (e) => { if (e.target.id === "checkoutOverlay") closeCheckout(); });
-
-    on($("#checkoutForm"), "submit", async (e) => { e.preventDefault(); submitOrder(e); });
-
-    on($("#orderNowBtn"), "click", (e) => {
-      const btn = e.currentTarget;
-      const r = btn.getBoundingClientRect();
-      const ripple = document.createElement("span");
-      ripple.className = "ripple";
-      const size = Math.max(r.width, r.height);
-      ripple.style.width = ripple.style.height = size + "px";
-      ripple.style.left = (e.clientX - r.left - size / 2) + "px";
-      ripple.style.top = (e.clientY - r.top - size / 2) + "px";
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
-    });
-  } catch (e) { console.warn("Checkout init error:", e); }
-
-  function renderCheckoutSummary() {
-    const itemsEl = $("#checkoutItems");
-    if (itemsEl) {
-      itemsEl.innerHTML = state.cart.map(i => `
-        <div class="checkout-summary-item">
-          <span>${i.name} × ${i.qty}</span>
-          <span>৳${(i.price * i.qty).toLocaleString()}</span>
-        </div>
-      `).join("");
-    }
-    const totalEl = $("#checkoutTotal");
-    if (totalEl) totalEl.textContent = "৳" + cartTotal().toLocaleString();
-  }
-
-  async function submitOrder(e) {
-    const payload = {
-      name: $("#ordName")?.value, mobile: $("#ordMobile")?.value, email: $("#ordEmail")?.value,
-      address: $("#ordAddress")?.value, district: $("#ordDistrict")?.value,
-      payment: document.querySelector('input[name="payment"]:checked')?.value,
-      items: state.cart, total: cartTotal()
-    };
-    let orderId = "NXC" + String(Math.floor(Math.random() * 1e7)).padStart(7, "0");
-    try {
-      const data = await apiCall(API_ACTIONS.CREATE_ORDER, payload);
-      if (data.orderId) orderId = data.orderId;
-    } catch (err) {
-      console.warn("Order API unreachable, using local order ID:", err.message);
-    }
-    const idEl = $("#orderIdDisplay");
-    if (idEl) idEl.textContent = orderId;
-    $("#checkoutBody")?.classList.add("hidden");
-    $("#checkoutSuccess")?.classList.add("show");
-    state.cart = [];
-    saveCart();
-    e.target?.reset?.();
-  }
-
-  try { on($("#closeSuccessBtn"), "click", closeCheckout); } catch (e) {}
-
-  /* ============================================================
-     TRACKING — animated progress path
-     ============================================================ */
-  const STAGE_ORDER = ["pending", "processing", "shipped", "delivered"];
-  function trackOrder() {
-    const id = $("#trackingInput")?.value.trim();
-    if (!id) { toast("Enter an order ID", "error"); return; }
-    const hash = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
-    const stageIndex = hash % 4;
-
-    $$(".track-step").forEach(s => s.classList.remove("active"));
-    $$(".track-line").forEach(l => l.classList.remove("filled"));
-
-    STAGE_ORDER.forEach((stage, i) => {
-      if (i <= stageIndex) {
-        setTimeout(() => {
-          $(`.track-step[data-step="${stage}"]`)?.classList.add("active");
-          if (i > 0) $$(".track-line")[i - 1]?.classList.add("filled");
-        }, i * 300);
-      }
-    });
-
-    const labels = ["Pending confirmation…", "Being processed at fulfillment hub…", "Shipped — en route to you…", "Delivered. Enjoy!"];
-    setTimeout(() => {
-      const statusEl = $("#trackStatusText");
-      if (statusEl) statusEl.textContent = `Order ${id}: ${labels[stageIndex]}`;
-    }, stageIndex * 300 + 200);
-  }
-  try {
-    on($("#trackBtn"), "click", trackOrder);
-    on($("#trackingInput"), "keydown", (e) => { if (e.key === "Enter") trackOrder(); });
-  } catch (e) { console.warn("Tracking init error:", e); }
-
-  /* ============================================================
-     SCROLL REVEAL
-     ============================================================ */
-  try {
-    const revealTargets = document.querySelectorAll(".info-card, .tracking-panel, .shop-layout");
-    revealTargets.forEach(el => el.classList.add("reveal"));
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add("visible"); io.unobserve(entry.target); }
-      });
-    }, { threshold: 0.15 });
-    revealTargets.forEach(el => io.observe(el));
-  } catch (e) { console.warn("Scroll reveal error:", e); }
-
-  /* ============================================================
-     TOASTS
-     ============================================================ */
-  function toast(msg, type = "success") {
-    const stack = $("#toastStack");
-    if (!stack) return;
-    const t = document.createElement("div");
-    t.className = "toast" + (type === "error" ? " error" : "");
-    t.textContent = msg;
-    stack.appendChild(t);
-    setTimeout(() => t.remove(), 2800);
-  }
-
-  window.NEXCART = { addToCart, showCheckout, submitOrder };
-})();
+  /* ------------------------------------------------------------
+     CART SYSTEM (localStorage)
+  ------------------------------------------------------------ */
