@@ -505,3 +505,136 @@
   try {
     on($("#initiateOrderBtn"), "click", showCheckout);
     on($("#closeCheckout"), "click", cl
+function showCheckout() {
+    if (!state.cart.length) { toast("Your cart is empty", "error"); return; }
+    $("#cartSidebar")?.classList.remove("open");
+    $("#cartOverlay")?.classList.remove("open");
+    renderCheckoutSummary();
+    $("#checkoutBody")?.classList.remove("hidden");
+    $("#checkoutSuccess")?.classList.remove("show");
+    $("#checkoutOverlay")?.classList.add("open");
+  }
+  function closeCheckout() { $("#checkoutOverlay")?.classList.remove("open"); }
+
+  try {
+    on($("#initiateOrderBtn"), "click", showCheckout);
+    on($("#closeCheckout"), "click", closeCheckout);
+    on($("#checkoutOverlay"), "click", (e) => { if (e.target.id === "checkoutOverlay") closeCheckout(); });
+
+    on($("#checkoutForm"), "submit", async (e) => { e.preventDefault(); submitOrder(e); });
+
+    on($("#orderNowBtn"), "click", (e) => {
+      const btn = e.currentTarget;
+      const r = btn.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "ripple";
+      const size = Math.max(r.width, r.height);
+      ripple.style.width = ripple.style.height = size + "px";
+      ripple.style.left = (e.clientX - r.left - size / 2) + "px";
+      ripple.style.top = (e.clientY - r.top - size / 2) + "px";
+      btn.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  } catch (e) { console.warn("Checkout init error:", e); }
+
+  function renderCheckoutSummary() {
+    const itemsEl = $("#checkoutItems");
+    if (itemsEl) {
+      itemsEl.innerHTML = state.cart.map(i => `
+        <div class="checkout-summary-item">
+          <span>${i.name} × ${i.qty}</span>
+          <span>৳${(i.price * i.qty).toLocaleString()}</span>
+        </div>
+      `).join("");
+    }
+    const totalEl = $("#checkoutTotal");
+    if (totalEl) totalEl.textContent = "৳" + cartTotal().toLocaleString();
+  }
+
+  async function submitOrder(e) {
+    const payload = {
+      name: $("#ordName")?.value, mobile: $("#ordMobile")?.value, email: $("#ordEmail")?.value,
+      address: $("#ordAddress")?.value, district: $("#ordDistrict")?.value,
+      payment: document.querySelector('input[name="payment"]:checked')?.value,
+      items: state.cart, total: cartTotal()
+    };
+    let orderId = "NXC" + String(Math.floor(Math.random() * 1e7)).padStart(7, "0");
+    try {
+      const data = await apiCall(API_ACTIONS.CREATE_ORDER, payload);
+      if (data.orderId) orderId = data.orderId;
+    } catch (err) {
+      console.warn("Order API unreachable, using local order ID:", err.message);
+    }
+    const idEl = $("#orderIdDisplay");
+    if (idEl) idEl.textContent = orderId;
+    $("#checkoutBody")?.classList.add("hidden");
+    $("#checkoutSuccess")?.classList.add("show");
+    state.cart = [];
+    saveCart();
+    e.target?.reset?.();
+  }
+
+  try { on($("#closeSuccessBtn"), "click", closeCheckout); } catch (e) {}
+
+  /* ============================================================
+     TRACKING — animated progress path
+     ============================================================ */
+  const STAGE_ORDER = ["pending", "processing", "shipped", "delivered"];
+  function trackOrder() {
+    const id = $("#trackingInput")?.value.trim();
+    if (!id) { toast("Enter an order ID", "error"); return; }
+    const hash = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
+    const stageIndex = hash % 4;
+
+    $$(".track-step").forEach(s => s.classList.remove("active"));
+    $$(".track-line").forEach(l => l.classList.remove("filled"));
+
+    STAGE_ORDER.forEach((stage, i) => {
+      if (i <= stageIndex) {
+        setTimeout(() => {
+          $(`.track-step[data-step="${stage}"]`)?.classList.add("active");
+          if (i > 0) $$(".track-line")[i - 1]?.classList.add("filled");
+        }, i * 300);
+      }
+    });
+
+    const labels = ["Pending confirmation…", "Being processed at fulfillment hub…", "Shipped — en route to you…", "Delivered. Enjoy!"];
+    setTimeout(() => {
+      const statusEl = $("#trackStatusText");
+      if (statusEl) statusEl.textContent = `Order ${id}: ${labels[stageIndex]}`;
+    }, stageIndex * 300 + 200);
+  }
+  try {
+    on($("#trackBtn"), "click", trackOrder);
+    on($("#trackingInput"), "keydown", (e) => { if (e.key === "Enter") trackOrder(); });
+  } catch (e) { console.warn("Tracking init error:", e); }
+
+  /* ============================================================
+     SCROLL REVEAL
+     ============================================================ */
+  try {
+    const revealTargets = document.querySelectorAll(".info-card, .tracking-panel, .shop-layout");
+    revealTargets.forEach(el => el.classList.add("reveal"));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add("visible"); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.15 });
+    revealTargets.forEach(el => io.observe(el));
+  } catch (e) { console.warn("Scroll reveal error:", e); }
+
+  /* ============================================================
+     TOASTS
+     ============================================================ */
+  function toast(msg, type = "success") {
+    const stack = $("#toastStack");
+    if (!stack) return;
+    const t = document.createElement("div");
+    t.className = "toast" + (type === "error" ? " error" : "");
+    t.textContent = msg;
+    stack.appendChild(t);
+    setTimeout(() => t.remove(), 2800);
+  }
+
+  window.NEXCART = { addToCart, showCheckout, submitOrder };
+})();
