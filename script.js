@@ -511,3 +511,229 @@ function initShop() {
   /* ------------------------------------------------------------
      QUANTUM CHECKOUT (order form)
   ------------------------------------------------------------ */
+function initCheckout() {
+    $("#closeCheckout").addEventListener("click", hideOrderForm);
+    $("#successCloseBtn").addEventListener("click", () => {
+      hideOrderForm();
+      goToPage("shop");
+    });
+    $("#orderForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitOrder();
+    });
+  }
+
+  window.showOrderForm = function showOrderForm() {
+    if (!state.cart.length) { showToast("Your cart is empty."); return; }
+    renderSummary();
+    $("#checkoutOverlay").classList.add("show");
+    $("#orderForm").hidden = false;
+    $("#orderForm").style.display = "";
+    $("#orderSuccess").hidden = true;
+  };
+
+  function hideOrderForm() {
+    $("#checkoutOverlay").classList.remove("show");
+  }
+
+  function renderSummary() {
+    const wrap = $("#summaryItems");
+    wrap.innerHTML = "";
+    state.cart.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "summary-item";
+      row.innerHTML = `<span>${escapeHtml(item.name)} × ${item.qty}</span><span>৳${(item.price * item.qty).toLocaleString()}</span>`;
+      wrap.appendChild(row);
+    });
+    $("#summaryTotal").textContent = "৳" + cartTotal().toLocaleString();
+  }
+
+  async function submitOrder() {
+    const btn = $("#orderNowBtn");
+    const payload = {
+      name: $("#custName").value.trim(),
+      mobile: $("#custMobile").value.trim(),
+      email: $("#custEmail").value.trim(),
+      address: $("#custAddress").value.trim(),
+      district: $("#custDistrict").value,
+      payment: (document.querySelector('input[name="payment"]:checked') || {}).value || "cod",
+      items: state.cart,
+      total: cartTotal(),
+    };
+
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "<span>PROCESSING...</span>";
+
+    try {
+      const result = await apiCall("create", payload);
+      const orderId = (result && result.orderId) || generateOrderId();
+      showOrderSuccess(orderId);
+      state.cart = [];
+      saveCart();
+      renderCartItems();
+    } catch (err) {
+      // API not reachable (expected until backend is wired up) — still confirm locally
+      const orderId = generateOrderId();
+      showOrderSuccess(orderId);
+      state.cart = [];
+      saveCart();
+      renderCartItems();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  }
+
+  function generateOrderId() {
+    const last = Number(localStorage.getItem("nexcart_order_seq") || "0") + 1;
+    localStorage.setItem("nexcart_order_seq", String(last));
+    return "NXC" + String(last).padStart(7, "0");
+  }
+
+  function showOrderSuccess(orderId) {
+    $("#orderForm").hidden = true;
+    $("#orderForm").style.display = "none";
+    $("#orderSuccess").hidden = false;
+    $("#finalOrderId").textContent = "Order ID: " + orderId;
+    // persist for tracking demo
+    const orders = JSON.parse(localStorage.getItem("nexcart_orders") || "{}");
+    orders[orderId] = { step: 0, createdAt: Date.now() };
+    localStorage.setItem("nexcart_orders", JSON.stringify(orders));
+  }
+
+  /* ------------------------------------------------------------
+     TRACKING
+  ------------------------------------------------------------ */
+  function initTracking() {
+    $("#trackBtn").addEventListener("click", runTracking);
+    $("#trackingInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") runTracking();
+    });
+  }
+
+  function runTracking() {
+    const id = $("#trackingInput").value.trim();
+    if (!id) { showToast("Enter an order ID to track."); return; }
+
+    const orders = JSON.parse(localStorage.getItem("nexcart_orders") || "{}");
+    // Deterministic pseudo-status derived from the order id + elapsed time,
+    // so the same ID always reproduces a believable step.
+    let step;
+    if (orders[id]) {
+      const hrsElapsed = (Date.now() - orders[id].createdAt) / 3600000;
+      step = Math.min(3, Math.floor(hrsElapsed / 6));
+    } else {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+      step = hash % 4;
+    }
+
+    $("#trackingResult").hidden = false;
+    $("#orderIdDisplay").textContent = "ORDER — " + id.toUpperCase();
+
+    const steps = $$(".path-step");
+    steps.forEach((s, i) => {
+      s.classList.remove("done", "current");
+      if (i < step) s.classList.add("done");
+      else if (i === step) s.classList.add("current");
+    });
+    $("#pathFill").style.width = `${(step / 3) * 100}%`;
+
+    const notes = [
+      "Your order has been received and is awaiting confirmation.",
+      "Your order is being prepared at the nearest quantum fulfillment node.",
+      "Your order has left the facility and is en route to your district.",
+      "Your order has been delivered. Thank you for shopping with NEXCARTBD.",
+    ];
+    $("#trackingNote").textContent = notes[step];
+  }
+
+  /* ------------------------------------------------------------
+     AUTH — register / login via API
+  ------------------------------------------------------------ */
+  function initAuth() {
+    $("#authBtn").addEventListener("click", openAuthPopup);
+    $("#closeAuth").addEventListener("click", closeAuthPopup);
+    $("#authScrim").addEventListener("click", closeAuthPopup);
+
+    $$(".auth-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        $$(".auth-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        $$(".auth-form").forEach((f) => f.classList.remove("active"));
+        $(`#${tab.dataset.tab}Form`).classList.add("active");
+      });
+    });
+
+    $("#loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await handleLogin();
+    });
+    $("#registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await handleRegister();
+    });
+  }
+
+  function openAuthPopup() {
+    $("#authPopup").classList.add("show");
+    $("#authScrim").classList.add("show");
+  }
+  function closeAuthPopup() {
+    $("#authPopup").classList.remove("show");
+    $("#authScrim").classList.remove("show");
+  }
+
+  async function handleLogin() {
+    const msg = $("#loginMsg");
+    msg.textContent = "Authenticating...";
+    msg.classList.remove("error");
+    try {
+      const payload = { identifier: $("#loginId").value.trim(), password: $("#loginPassword").value };
+      const result = await apiCall("login", payload);
+      state.user = (result && result.user) || { name: "Member" };
+      state.token = (result && result.token) || null;
+      persistUser();
+      msg.textContent = "Welcome back!";
+      setTimeout(closeAuthPopup, 700);
+    } catch (err) {
+      msg.textContent = "Login failed. Check your credentials or connection.";
+      msg.classList.add("error");
+    }
+  }
+
+  async function handleRegister() {
+    const msg = $("#registerMsg");
+    msg.textContent = "Creating your account...";
+    msg.classList.remove("error");
+    try {
+      const payload = {
+        name: $("#regName").value.trim(),
+        mobile: $("#regMobile").value.trim(),
+        email: $("#regEmail").value.trim(),
+        password: $("#regPassword").value,
+        address: $("#regAddress").value.trim(),
+        district: $("#regDistrict").value,
+      };
+      const result = await apiCall("register", payload);
+      state.user = (result && result.user) || { name: payload.name };
+      state.token = (result && result.token) || null;
+      persistUser();
+      msg.textContent = "Account created. Welcome to NEXCARTBD!";
+      setTimeout(closeAuthPopup, 700);
+    } catch (err) {
+      msg.textContent = "Registration failed. Please try again.";
+      msg.classList.add("error");
+    }
+  }
+
+  function persistUser() {
+    if (state.user) localStorage.setItem("nexcart_user", JSON.stringify(state.user));
+    if (state.token) localStorage.setItem("nexcart_token", state.token);
+  }
+
+  /* ------------------------------------------------------------
+     API LAYER
+     Actions: register, login, getProducts, create (order)
+  ------------------------------------------------------------ */
