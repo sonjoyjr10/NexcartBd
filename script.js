@@ -209,7 +209,7 @@
     }
 
     on($("#aiRecommendBtn"), "click", () => {
-      if (!window.products || !products.length) {
+      if (typeof products === "undefined" || !products.length) {
         toast("AI is still learning the catalog — check back soon.", "error");
         return;
       }
@@ -231,7 +231,7 @@
   function populateCategories() {
     try {
       const sel = $("#categoryFilter");
-      if (!sel || !window.products) return;
+      if (!sel || typeof products === "undefined") return;
       const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
       cats.forEach(c => {
         const opt = document.createElement("option");
@@ -248,7 +248,7 @@
       const search = ($("#shopSearch")?.value || "").toLowerCase();
       const category = $("#categoryFilter")?.value || "all";
       const maxPrice = Number($("#priceFilter")?.value || 200000);
-      const list = ((window.products) || []).filter(p => {
+      const list = (typeof products !== "undefined" ? products : []).filter(p => {
         const matchSearch = !search || p.name?.toLowerCase().includes(search);
         const matchCat = category === "all" || p.category === category;
         const matchPrice = !p.price || p.price <= maxPrice;
@@ -260,7 +260,7 @@
         grid.innerHTML = `
           <div class="empty-state">
             <span class="ai-pulse-dot" style="display:inline-block;"></span>
-            <p>${(window.products && products.length) ? "No products match your filters." : "AI is scanning the catalog… products will materialize here once added."}</p>
+            <p>${(typeof products !== "undefined" && products.length) ? "No products match your filters." : "AI is scanning the catalog… products will materialize here once added."}</p>
           </div>`;
         return;
       }
@@ -298,7 +298,7 @@
   try {
     on($("#productGrid"), "click", (e) => {
       const btn = e.target.closest("button[data-action]");
-      if (!btn || !window.products) return;
+      if (!btn || typeof products === "undefined") return;
       const product = products.find(p => String(p.id) === btn.dataset.id);
       if (!product) return;
       if (btn.dataset.action === "add") addToCart(product);
@@ -476,7 +476,7 @@
     try {
       const res = await fetch(API_ACTIONS.GET_PRODUCTS);
       const data = await res.json();
-      if (Array.isArray(data) && data.length && window.products) {
+      if (Array.isArray(data) && data.length && typeof products !== "undefined") {
         products.length = 0;
         products.push(...data);
         populateCategories();
