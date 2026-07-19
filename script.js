@@ -288,3 +288,226 @@
   /* ------------------------------------------------------------
      SHOP — dynamic product rendering from products.js
   ------------------------------------------------------------ */
+function initShop() {
+    populateCategories();
+    renderProducts();
+
+    $("#productSearch").addEventListener("input", (e) => {
+      state.filters.search = e.target.value.toLowerCase();
+      renderProducts();
+    });
+    $("#categoryFilter").addEventListener("change", (e) => {
+      state.filters.category = e.target.value;
+      renderProducts();
+    });
+    $("#priceFilter").addEventListener("input", (e) => {
+      state.filters.maxPrice = Number(e.target.value);
+      $("#priceMax").textContent = "৳" + Number(e.target.value).toLocaleString() + (Number(e.target.value) >= 200000 ? "+" : "");
+      renderProducts();
+    });
+    $("#sortFilter").addEventListener("change", (e) => {
+      state.filters.sort = e.target.value;
+      renderProducts();
+    });
+
+    $("#aiSearchBtn").addEventListener("click", () => {
+      goToPage("shop");
+      $("#productSearch").focus();
+    });
+  }
+
+  function populateCategories() {
+    const sel = $("#categoryFilter");
+    const cats = Array.from(new Set((window.products || []).map((p) => p.category).filter(Boolean)));
+    cats.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  function getFilteredProducts() {
+    let list = (window.products || []).slice();
+    const f = state.filters;
+
+    if (f.search) {
+      list = list.filter((p) => (p.name || "").toLowerCase().includes(f.search) || (p.category || "").toLowerCase().includes(f.search));
+    }
+    if (f.category !== "all") {
+      list = list.filter((p) => p.category === f.category);
+    }
+    list = list.filter((p) => (p.price || 0) <= f.maxPrice);
+
+    switch (f.sort) {
+      case "price-asc": list.sort((a, b) => (a.price||0) - (b.price||0)); break;
+      case "price-desc": list.sort((a, b) => (b.price||0) - (a.price||0)); break;
+      case "newest": list.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0)); break;
+      default: list.sort((a, b) => (b.trending === true) - (a.trending === true));
+    }
+    return list;
+  }
+
+  function renderProducts() {
+    const grid = $("#productGrid");
+    const empty = $("#emptyState");
+    const list = getFilteredProducts();
+
+    grid.innerHTML = "";
+    $("#resultCount").textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
+
+    if (!list.length) {
+      empty.classList.add("show");
+      return;
+    }
+    empty.classList.remove("show");
+
+    list.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.style.animationDelay = `${Math.min(i, 10) * 0.05}s`;
+      card.innerHTML = `
+        ${p.trending ? '<span class="card-badge">AI TRENDING</span>' : ""}
+        <div class="product-thumb">${p.image ? `<img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name || "")}" loading="lazy">` : "🛰️"}</div>
+        <div class="product-name">${escapeHtml(p.name || "Unnamed Product")}</div>
+        <div class="product-cat">${escapeHtml(p.category || "")}</div>
+        <div class="product-price-row">
+          <span class="product-price">৳${Number(p.price || 0).toLocaleString()}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-liquid btn-ghost add-to-cart-btn" data-id="${escapeAttr(p.id)}"><span>Add to Cart</span></button>
+          <button class="btn btn-liquid btn-primary instant-buy-btn" data-id="${escapeAttr(p.id)}"><span>Instant Buy</span></button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    $$(".add-to-cart-btn").forEach((btn) => btn.addEventListener("click", (e) => {
+      addToCart(btn.dataset.id);
+      spawnRipple(e, btn);
+    }));
+    $$(".instant-buy-btn").forEach((btn) => btn.addEventListener("click", (e) => {
+      addToCart(btn.dataset.id, true);
+      spawnRipple(e, btn);
+      showOrderForm();
+    }));
+
+    initTiltCards();
+  }
+
+  /* ------------------------------------------------------------
+     CART SYSTEM (localStorage)
+  ------------------------------------------------------------ */
+  function saveCart() {
+    localStorage.setItem("nexcart_cart", JSON.stringify(state.cart));
+    renderCartBadge();
+  }
+
+  function addToCart(productId, silent) {
+    const product = (window.products || []).find((p) => String(p.id) === String(productId));
+    if (!product) { showToast("Product unavailable in the catalog."); return; }
+
+    const existing = state.cart.find((c) => c.id === product.id);
+    if (existing) existing.qty += 1;
+    else state.cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: 1 });
+
+    saveCart();
+    renderCartItems();
+    if (!silent) showToast(`${product.name} added to cart`);
+  }
+
+  function updateQty(id, delta) {
+    const item = state.cart.find((c) => c.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    saveCart();
+    renderCartItems();
+  }
+
+  function removeFromCart(id) {
+    const el = document.querySelector(`.cart-item[data-id="${cssEscape(id)}"]`);
+    if (el) {
+      el.classList.add("removing");
+      setTimeout(() => {
+        state.cart = state.cart.filter((c) => c.id !== id);
+        saveCart();
+        renderCartItems();
+      }, 280);
+    } else {
+      state.cart = state.cart.filter((c) => c.id !== id);
+      saveCart();
+      renderCartItems();
+    }
+  }
+
+  function cartTotal() {
+    return state.cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  }
+
+  function renderCartBadge() {
+    const count = state.cart.reduce((s, i) => s + i.qty, 0);
+    $("#cartCount").textContent = count;
+  }
+
+  function renderCartItems() {
+    const wrap = $("#cartItems");
+    const emptyMsg = $("#cartEmptyMsg");
+    wrap.innerHTML = "";
+
+    if (!state.cart.length) {
+      emptyMsg.classList.add("show");
+    } else {
+      emptyMsg.classList.remove("show");
+      state.cart.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.dataset.id = item.id;
+        row.innerHTML = `
+          <div class="cart-item-thumb">${item.image ? `<img src="${escapeAttr(item.image)}" alt="">` : "🛰️"}</div>
+          <div class="cart-item-info">
+            <h4>${escapeHtml(item.name)}</h4>
+            <div class="cart-item-price">৳${Number(item.price).toLocaleString()}</div>
+            <div class="qty-row">
+              <button class="qty-btn minus">−</button>
+              <span>${item.qty}</span>
+              <button class="qty-btn plus">+</button>
+            </div>
+            <div class="remove-item">Remove</div>
+          </div>
+        `;
+        row.querySelector(".minus").addEventListener("click", () => updateQty(item.id, -1));
+        row.querySelector(".plus").addEventListener("click", () => updateQty(item.id, 1));
+        row.querySelector(".remove-item").addEventListener("click", () => removeFromCart(item.id));
+        wrap.appendChild(row);
+      });
+    }
+    $("#cartTotal").textContent = "৳" + cartTotal().toLocaleString();
+  }
+
+  function initCartUI() {
+    renderCartItems();
+    $("#cartBtn").addEventListener("click", openCart);
+    $("#closeCart").addEventListener("click", closeCart);
+    $("#cartScrim").addEventListener("click", () => { closeCart(); closeAuthPopup(); });
+    $("#initiateOrderBtn").addEventListener("click", () => {
+      if (!state.cart.length) { showToast("Your cart is empty."); return; }
+      closeCart();
+      showOrderForm();
+    });
+  }
+
+  function openCart() {
+    $("#cartSidebar").classList.add("open");
+    $("#cartScrim").classList.add("show");
+  }
+  function closeCart() {
+    $("#cartSidebar").classList.remove("open");
+    $("#cartScrim").classList.remove("show");
+  }
+
+  /* ------------------------------------------------------------
+     QUANTUM CHECKOUT (order form)
+  ------------------------------------------------------------ */
