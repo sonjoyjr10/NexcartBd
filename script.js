@@ -807,3 +807,30 @@ function saveCart() {
   /* ------------------------------------------------------------
      UTIL
   ------------------------------------------------------------ */
+function showToast(text) {
+    const toast = $("#toast");
+    toast.textContent = text;
+    toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove("show"), 2600);
+  }
+
+  function animateStat(el, target, duration) {
+    if (!el) return;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      el.textContent = Math.floor(p * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+  }
+  function escapeAttr(str) { return escapeHtml(str); }
+  function cssEscape(str) {
+    return String(str).replace(/["\\]/g, "\\$&");
+  }
+})();
