@@ -305,9 +305,11 @@ section{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:100px
 }
 .checkout-overlay.open{opacity:1;visibility:visible;}
 .checkout-card{
-  background:rgba(2,4,10,0.92);
-  position:relative;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;border-radius:24px;padding:40px;
-  transform:scale(.92);transition:transform .4s var(--ease);
+  background:#050810;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  position:relative;max-width:900px;width:100%;
+  ...
 }
 .checkout-overlay.open .checkout-card{transform:scale(1);}
 .checkout-border-spin{
