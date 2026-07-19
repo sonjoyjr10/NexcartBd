@@ -7,7 +7,7 @@
 <meta name="description" content="NEXCARTBD — Bangladesh's most premium AI-powered e-commerce experience.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -206,58 +206,60 @@
 
 <!-- ORDER FORM / QUANTUM CHECKOUT -->
 <div class="checkout-overlay" id="checkoutOverlay">
-  <div class="checkout-card glass">
+  <div class="checkout-card">
     <div class="checkout-border-spin"></div>
-    <button class="close-x checkout-close" id="closeCheckout">✕</button>
-    <h2 class="checkout-title">QUANTUM CHECKOUT</h2>
+    <div class="checkout-inner">
+      <button class="close-x checkout-close" id="closeCheckout">✕</button>
+      <h2 class="checkout-title">QUANTUM CHECKOUT</h2>
 
-    <div class="checkout-body" id="checkoutBody">
-      <div class="checkout-summary">
-        <h4>Order Summary</h4>
-        <div id="checkoutItems"></div>
-        <div class="checkout-total-row"><span>Total</span><span id="checkoutTotal">৳0</span></div>
-      </div>
-
-      <form class="checkout-form" id="checkoutForm">
-        <input type="text" id="ordName" placeholder="Full Name" required>
-        <input type="tel" id="ordMobile" placeholder="Mobile Number" required>
-        <input type="email" id="ordEmail" placeholder="Email Address">
-        <textarea id="ordAddress" placeholder="Full Address" required rows="2"></textarea>
-        <select id="ordDistrict" required>
-          <option value="">Select District</option>
-          <option>Dhaka</option><option>Chattogram</option><option>Khulna</option>
-          <option>Rajshahi</option><option>Sylhet</option><option>Barishal</option>
-          <option>Rangpur</option><option>Mymensingh</option>
-        </select>
-
-        <div class="payment-section">
-          <label class="pay-option">
-            <input type="radio" name="payment" value="cod" checked>
-            <span>Cash on Delivery</span>
-          </label>
-          <label class="pay-option">
-            <input type="radio" name="payment" value="online">
-            <span>Online Payment / bKash-Nagad</span>
-          </label>
+      <div class="checkout-body" id="checkoutBody">
+        <div class="checkout-summary">
+          <h4>Order Summary</h4>
+          <div id="checkoutItems"></div>
+          <div class="checkout-total-row"><span>Total</span><span id="checkoutTotal">৳0</span></div>
         </div>
 
-        <button type="submit" class="btn-order-now" id="orderNowBtn"><span>ORDER NOW</span></button>
-      </form>
-    </div>
+        <form class="checkout-form" id="checkoutForm">
+          <input type="text" id="ordName" placeholder="Full Name" required>
+          <input type="tel" id="ordMobile" placeholder="Mobile Number" required>
+          <input type="email" id="ordEmail" placeholder="Email Address">
+          <textarea id="ordAddress" placeholder="Full Address" required rows="2"></textarea>
+          <select id="ordDistrict" required>
+            <option value="">Select District</option>
+            <option>Dhaka</option><option>Chattogram</option><option>Khulna</option>
+            <option>Rajshahi</option><option>Sylhet</option><option>Barishal</option>
+            <option>Rangpur</option><option>Mymensingh</option>
+          </select>
 
-    <div class="checkout-success" id="checkoutSuccess">
-      <div class="success-ring"></div>
-      <h3>ORDER CONFIRMED</h3>
-      <p>Order ID</p>
-      <div class="order-id-display" id="orderIdDisplay">NXC0000001</div>
-      <button class="btn-liquid btn-primary" id="closeSuccessBtn"><span>Done</span></button>
+          <div class="payment-section">
+            <label class="pay-option">
+              <input type="radio" name="payment" value="cod" checked>
+              <span>Cash on Delivery</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payment" value="online">
+              <span>Online Payment / bKash-Nagad</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-order-now" id="orderNowBtn"><span>ORDER NOW</span></button>
+        </form>
+      </div>
+
+      <div class="checkout-success" id="checkoutSuccess">
+        <div class="success-ring"></div>
+        <h3>ORDER CONFIRMED</h3>
+        <p>Order ID</p>
+        <div class="order-id-display" id="orderIdDisplay">NXC0000001</div>
+        <button class="btn-liquid btn-primary" id="closeSuccessBtn"><span>Done</span></button>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay">
-  <div class="auth-card glass">
+  <div class="auth-card">
     <button class="close-x" id="closeAuth">✕</button>
     <div class="auth-tabs">
       <button class="auth-tab active" data-tab="login">Login</button>
@@ -289,8 +291,8 @@
 
 <div class="toast-stack" id="toastStack"></div>
 
-<script src="config.js?v=3"></script>
-<script src="products.js?v=3"></script>
-<script src="script.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="products.js?v=4"></script>
+<script src="script.js?v=4"></script>
 </body>
-  </html>
+</html>
