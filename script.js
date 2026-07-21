@@ -184,8 +184,8 @@
   /* ============================================================
      HERO — typewriter + 3D orb tracking mouse
      ============================================================ */
- try {
-    const phrase = "WELCOME TO SHOPPING";
+  try {
+    const phrase = "WELCOME TO NEXCARTBD";
     let ti = 0;
     function typewrite() {
       const tw = $("#typewriter");
@@ -410,7 +410,7 @@
   /* ============================================================
      AUTH — register / login via API
      ============================================================ */
-try {
+  try {
     on($("#authBtn"), "click", () => {
       if (state.user) openProfile();
       else $("#authOverlay")?.classList.add("open");
@@ -626,7 +626,7 @@ try {
   /* ============================================================
      TRACKING — animated progress path
      ============================================================ */
- const STAGE_ORDER = ["pending", "processing", "shipped", "delivered"];
+  const STAGE_ORDER = ["pending", "processing", "shipped", "delivered"];
   function trackOrder() {
     const id = $("#trackingInput")?.value.trim();
     if (!id) { toast("Enter an order ID", "error"); return; }
