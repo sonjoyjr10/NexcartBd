@@ -185,7 +185,7 @@
      HERO — typewriter + 3D orb tracking mouse
      ============================================================ */
   try {
-    const phrase = "WELCOME TO 2060 SHOPPING";
+    const phrase = "WELCOME TO SHOPPING";
     let ti = 0;
     function typewrite() {
       const tw = $("#typewriter");
@@ -423,17 +423,17 @@
     }));
   } catch (e) { console.warn("Auth tabs error:", e); }
 
-  async function apiCall(url, payload) {
+  async function apiCall(actionName, payload) {
     // Content-Type is intentionally "text/plain" (not "application/json") and no
     // custom headers are sent, so the browser treats this as a "simple request"
     // and skips the CORS preflight (OPTIONS) — which Google Apps Script Web Apps
     // do not handle. Apps Script still parses the body fine via JSON.parse().
-    const res = await fetch(url, {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "text/plain;charset=utf-8"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ action: actionName, ...payload })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.success === false) throw new Error(data.message || "Request failed");
@@ -477,11 +477,10 @@
      ============================================================ */
   async function getProducts() {
     try {
-      const res = await fetch(API_ACTIONS.GET_PRODUCTS);
-      const data = await res.json();
-      if (Array.isArray(data) && data.length && typeof products !== "undefined") {
+      const data = await apiCall(API_ACTIONS.GET_PRODUCTS, {});
+      if (data.success && Array.isArray(data.products) && data.products.length && typeof products !== "undefined") {
         products.length = 0;
-        products.push(...data);
+        products.push(...data.products);
         populateCategories();
         renderProducts();
       }
