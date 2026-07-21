@@ -1,7 +1,7 @@
 // NEXCARTBD — API configuration
 // Replace API_URL with your real backend base URL.
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwSrInmFfHanLBvaLSsBx5swYf-Fy5eau4XTKmmHP3iqz_47hHzs32V0KHe2ZKlGl5Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzbNFUJ0d4alv_Rv7_evzUsVZ60qkZbAqfrufWbztZp_RBHqsM1KKpJ3YrF6kyJyvWR/exec";
 
 const API_ACTIONS = {
   REGISTER: `${API_URL}/auth/register`,
