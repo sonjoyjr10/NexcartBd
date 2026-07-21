@@ -7,7 +7,7 @@
 <meta name="description" content="NEXCARTBD — Bangladesh's most premium AI-powered e-commerce experience.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -286,10 +286,27 @@
   </div>
 </div>
 
+<!-- PROFILE MODAL -->
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-card">
+    <button class="close-x" id="closeProfile">✕</button>
+    <div class="profile-avatar">👤</div>
+    <h2 class="profile-name" id="profileName">—</h2>
+    <p class="profile-memberid" id="profileMemberID">—</p>
+    <div class="profile-details">
+      <div class="profile-row"><span>Mobile</span><span id="profileMobile">—</span></div>
+      <div class="profile-row"><span>Email</span><span id="profileEmail">—</span></div>
+      <div class="profile-row"><span>Address</span><span id="profileAddress">—</span></div>
+      <div class="profile-row"><span>District</span><span id="profileDistrict">—</span></div>
+    </div>
+    <button class="btn-liquid btn-ghost full" id="logoutBtn"><span>Logout</span></button>
+  </div>
+</div>
+
 <div class="toast-stack" id="toastStack"></div>
 
-<script src="config.js?v=10"></script>
-<script src="products.js?v=10"></script>
-<script src="script.js?v=10"></script>
+<script src="config.js?v=11"></script>
+<script src="products.js?v=11"></script>
+<script src="script.js?v=11"></script>
 </body>
 </html>
