@@ -424,16 +424,19 @@
   } catch (e) { console.warn("Auth tabs error:", e); }
 
   async function apiCall(url, payload) {
+    // Content-Type is intentionally "text/plain" (not "application/json") and no
+    // custom headers are sent, so the browser treats this as a "simple request"
+    // and skips the CORS preflight (OPTIONS) — which Google Apps Script Web Apps
+    // do not handle. Apps Script still parses the body fine via JSON.parse().
     const res = await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        ...(state.token ? { Authorization: `Bearer ${state.token}` } : {})
+        "Content-Type": "text/plain;charset=utf-8"
       },
       body: JSON.stringify(payload)
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || "Request failed");
+    if (!res.ok || data.success === false) throw new Error(data.message || "Request failed");
     return data;
   }
 
@@ -487,6 +490,7 @@
     }
   }
   try { getProducts(); } catch (e) { console.warn("getProducts error:", e); }
+
   /* ============================================================
      QUANTUM CHECKOUT — order form
      ============================================================ */
@@ -570,7 +574,7 @@
     let orderId = "NXC" + String(Math.floor(Math.random() * 1e7)).padStart(7, "0");
     try {
       const data = await apiCall(API_ACTIONS.CREATE_ORDER, payload);
-      if (data.orderId) orderId = data.orderId;
+      if (data.orderID) orderId = data.orderID;
     } catch (err) {
       console.warn("Order API unreachable, using local order ID:", err.message);
     }
