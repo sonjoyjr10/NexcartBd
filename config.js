@@ -4,7 +4,7 @@
 // /auth/login. Instead, every request goes to this same URL, and an "action"
 // field inside the request body tells the backend what to do.
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzbNFUJ0d4alv_Rv7_evzUsVZ60qkZbAqfrufWbztZp_RBHqsM1KKpJ3YrF6kyJyvWR/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby0TRknlK8NebkjS2x-tdPnNJ0Tl-8eE2j5an2jIpjUH2qIXZbnJzMcVUQ18hbmlChk/exec";
 
 const API_ACTIONS = {
   REGISTER: "register",
