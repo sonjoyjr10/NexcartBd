@@ -269,11 +269,22 @@
         const card = document.createElement("div");
         card.className = "product-card glass";
         card.style.animationDelay = `${i * 0.05}s`;
+        const isClothing = String(p.category || "").trim().toLowerCase() === "clothing";
+        const sizes = Array.isArray(p.sizes) ? p.sizes : [];
+        const showSizes = isClothing && sizes.length > 0;
         card.innerHTML = `
           ${p.trending ? '<span class="trending-badge">AI TRENDING</span>' : ""}
           <div class="product-img"><img src="${p.image || ''}" alt="${p.name || 'Product'}" loading="lazy" onerror="this.style.opacity=0"></div>
           <h4>${p.name || "Unnamed Product"}</h4>
+          ${p.description ? `<p class="product-desc">${p.description}</p>` : ""}
           <div class="product-price">৳${(p.price || 0).toLocaleString()}</div>
+          ${showSizes ? `
+            <div class="size-select-wrap">
+              <label>Size</label>
+              <select class="size-select" data-size-for="${p.id}">
+                ${sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
+              </select>
+            </div>` : ""}
           <div class="product-actions">
             <button class="btn-liquid btn-ghost" data-action="add" data-id="${p.id}">Add to Cart</button>
             <button class="btn-liquid btn-primary" data-action="buy" data-id="${p.id}">Instant Buy</button>
@@ -301,8 +312,11 @@
       if (!btn || typeof products === "undefined") return;
       const product = products.find(p => String(p.id) === btn.dataset.id);
       if (!product) return;
-      if (btn.dataset.action === "add") addToCart(product);
-      else { addToCart(product); showCheckout(); }
+      const card = btn.closest(".product-card");
+      const sizeSelect = card?.querySelector(`.size-select[data-size-for="${product.id}"]`);
+      const size = sizeSelect ? sizeSelect.value : null;
+      if (btn.dataset.action === "add") addToCart(product, size);
+      else { addToCart(product, size); showCheckout(); }
     });
 
     ["shopSearch", "categoryFilter"].forEach(id => on($("#" + id), "input", renderProducts));
@@ -329,28 +343,30 @@
   function saveCart() {
     localStorage.setItem("nexcart_cart", JSON.stringify(state.cart));
     renderCart();
+    if ($("#checkoutOverlay")?.classList.contains("open")) renderCheckoutSummary();
   }
-  function addToCart(product) {
-    const existing = state.cart.find(i => i.id === product.id);
+  function addToCart(product, size) {
+    const cartId = size ? `${product.id}__${size}` : String(product.id);
+    const existing = state.cart.find(i => i.cartId === cartId);
     if (existing) existing.qty += 1;
-    else state.cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: 1 });
+    else state.cart.push({ cartId, id: product.id, name: product.name, price: product.price, image: product.image, qty: 1, size: size || null });
     saveCart();
-    toast(`${product.name} added to cart`);
+    toast(`${product.name}${size ? ` (${size})` : ""} added to cart`);
   }
-  function updateQty(id, delta) {
-    const item = state.cart.find(i => i.id === id);
+  function updateQty(cartId, delta) {
+    const item = state.cart.find(i => i.cartId === cartId);
     if (!item) return;
     item.qty += delta;
-    if (item.qty <= 0) removeFromCart(id);
+    if (item.qty <= 0) removeFromCart(cartId);
     else saveCart();
   }
-  function removeFromCart(id) {
-    const el = document.querySelector(`.cart-item[data-id="${id}"]`);
+  function removeFromCart(cartId) {
+    const el = document.querySelector(`.cart-item[data-cartid="${cartId}"]`);
     if (el) {
       el.classList.add("removing");
-      setTimeout(() => { state.cart = state.cart.filter(i => i.id !== id); saveCart(); }, 380);
+      setTimeout(() => { state.cart = state.cart.filter(i => i.cartId !== cartId); saveCart(); }, 380);
     } else {
-      state.cart = state.cart.filter(i => i.id !== id);
+      state.cart = state.cart.filter(i => i.cartId !== cartId);
       saveCart();
     }
   }
@@ -370,16 +386,16 @@
         return;
       }
       wrap.innerHTML = state.cart.map(i => `
-        <div class="cart-item" data-id="${i.id}">
+        <div class="cart-item" data-cartid="${i.cartId}">
           <img src="${i.image || ''}" alt="${i.name}" onerror="this.style.opacity=0">
           <div class="cart-item-info">
-            <h5>${i.name}</h5>
+            <h5>${i.name}${i.size ? ` <span class="size-badge">${i.size}</span>` : ""}</h5>
             <div>৳${i.price.toLocaleString()}</div>
             <div class="cart-item-controls">
-              <button class="qty-btn" data-act="dec" data-id="${i.id}">−</button>
+              <button class="qty-btn" data-act="dec" data-cartid="${i.cartId}">−</button>
               <span>${i.qty}</span>
-              <button class="qty-btn" data-act="inc" data-id="${i.id}">+</button>
-              <span class="remove-item" data-act="rm" data-id="${i.id}">Remove</span>
+              <button class="qty-btn" data-act="inc" data-cartid="${i.cartId}">+</button>
+              <span class="remove-item" data-act="rm" data-cartid="${i.cartId}">Remove</span>
             </div>
           </div>
         </div>
@@ -391,11 +407,10 @@
     on($("#cartItems"), "click", (e) => {
       const t = e.target.closest("[data-act]");
       if (!t) return;
-      const id = t.dataset.id;
-      const pid = isNaN(id) ? id : Number(id);
-      if (t.dataset.act === "inc") updateQty(pid, 1);
-      if (t.dataset.act === "dec") updateQty(pid, -1);
-      if (t.dataset.act === "rm") removeFromCart(pid);
+      const cartId = t.dataset.cartid;
+      if (t.dataset.act === "inc") updateQty(cartId, 1);
+      if (t.dataset.act === "dec") updateQty(cartId, -1);
+      if (t.dataset.act === "rm") removeFromCart(cartId);
     });
 
     on($("#cartBtn"), "click", openCart);
@@ -569,11 +584,11 @@
         itemsEl.innerHTML = state.cart.map(i => `
           <div class="checkout-summary-item">
             <div class="checkout-summary-item-left">
-              <span class="checkout-summary-name">${i.name}</span>
+              <span class="checkout-summary-name">${i.name}${i.size ? ` <span class="size-badge">${i.size}</span>` : ""}</span>
               <div class="checkout-qty-controls">
-                <button class="qty-btn" data-cact="dec" data-cid="${i.id}">−</button>
+                <button class="qty-btn" data-cact="dec" data-cid="${i.cartId}">−</button>
                 <span>${i.qty}</span>
-                <button class="qty-btn" data-cact="inc" data-cid="${i.id}">+</button>
+                <button class="qty-btn" data-cact="inc" data-cid="${i.cartId}">+</button>
               </div>
             </div>
             <span>৳${(i.price * i.qty).toLocaleString()}</span>
@@ -589,10 +604,9 @@
     on($("#checkoutItems"), "click", (e) => {
       const t = e.target.closest("[data-cact]");
       if (!t) return;
-      const id = t.dataset.cid;
-      const pid = isNaN(id) ? id : Number(id);
-      if (t.dataset.cact === "inc") updateQty(pid, 1);
-      if (t.dataset.cact === "dec") updateQty(pid, -1);
+      const cartId = t.dataset.cid;
+      if (t.dataset.cact === "inc") updateQty(cartId, 1);
+      if (t.dataset.cact === "dec") updateQty(cartId, -1);
       renderCheckoutSummary();
       if (!state.cart.length) closeCheckout();
     });
